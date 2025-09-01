@@ -43,6 +43,8 @@ export default function PortfolioPage() {
       maturityDate: "2029-03-20",
       nextCoupon: "2024-09-20",
       yieldCurrent: 8.38,
+      maxUnitsAvailable: 50,
+      totalUnits: 100,
     },
     {
       id: "2",
@@ -55,6 +57,8 @@ export default function PortfolioPage() {
       maturityDate: "2034-01-15",
       nextCoupon: "2024-10-15",
       yieldCurrent: 7.35,
+      maxUnitsAvailable: 100,
+      totalUnits: 100,
     },
     {
       id: "3",
@@ -67,6 +71,8 @@ export default function PortfolioPage() {
       maturityDate: "2026-06-15",
       nextCoupon: "2024-12-15",
       yieldCurrent: 8.26,
+      maxUnitsAvailable: 30,
+      totalUnits: 100,
     },
   ];
 
@@ -80,7 +86,8 @@ export default function PortfolioPage() {
       maturityDate: "2029-12-15",
       couponRate: 8.5,
       yieldCurrent: 8.55,
-      sold: "94% Sold",
+      maxUnitsAvailable: 75,
+      totalUnits: 100,
     },
     {
       id: "nb2",
@@ -91,7 +98,8 @@ export default function PortfolioPage() {
       maturityDate: "2039-06-20",
       couponRate: 7.8,
       yieldCurrent: 7.68,
-      sold: "67% Sold",
+      maxUnitsAvailable: 20,
+      totalUnits: 100,
     },
     {
       id: "nb3",
@@ -102,7 +110,8 @@ export default function PortfolioPage() {
       maturityDate: "2027-09-10",
       couponRate: 8.8,
       yieldCurrent: 9.02,
-      sold: "82% Sold",
+      maxUnitsAvailable: 4,
+      totalUnits: 100,
     },
     {
       id: "nb4",
@@ -113,7 +122,8 @@ export default function PortfolioPage() {
       maturityDate: "Perpetual",
       couponRate: 9.2,
       yieldCurrent: 8.98,
-      sold: "45% Sold",
+      maxUnitsAvailable: 6,
+      totalUnits: 100,
     },
     {
       id: "nb5",
@@ -124,7 +134,8 @@ export default function PortfolioPage() {
       maturityDate: "2026-03-25",
       couponRate: 9.5,
       yieldCurrent: 9.89,
-      sold: "78% Sold",
+      maxUnitsAvailable: 35,
+      totalUnits: 100,
     },
   ];
 
@@ -142,6 +153,11 @@ export default function PortfolioPage() {
       month: "short",
       day: "numeric",
     });
+  };
+
+  const calculatePercentageSold = (totalUnits: number, maxUnitsAvailable: number) => {
+    const soldUnits = totalUnits - maxUnitsAvailable;
+    return Math.round((soldUnits / totalUnits) * 100);
   };
 
   return (
@@ -271,7 +287,7 @@ export default function PortfolioPage() {
                     <div className="lg:col-span-3">
                       <div className="space-y-1">
                         <div className="text-sm text-gray-500">
-                          Current Yield
+                          Current YTM
                         </div>
                         <div className="font-medium text-green-600">
                           {holding.yieldCurrent}%
@@ -297,10 +313,23 @@ export default function PortfolioPage() {
 
                   <div className="flex justify-end gap-2 mt-4 pt-4 border-t">
               
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        window.location.href = `/buy-sell?bondId=${holding.id}&type=sell`;
+                      }}
+                    >
                       Sell
                     </Button>
-                    <Button size="sm">Buy More</Button>
+                    <Button 
+                      size="sm"
+                      onClick={() => {
+                        window.location.href = `/buy-sell?bondId=${holding.id}&type=buy`;
+                      }}
+                    >
+                      Buy More
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -346,7 +375,7 @@ export default function PortfolioPage() {
                     <div className="lg:col-span-2">
                       <div className="space-y-1">
                         <div className="text-sm text-gray-500">
-                          Current Yield
+                          Current YTM
                         </div>
                         <div className="font-medium text-green-600">
                           {bond.yieldCurrent}%
@@ -358,7 +387,7 @@ export default function PortfolioPage() {
                     </div>
 
                     {/* Maturity */}
-                    <div className="lg:col-span-3">
+                    <div className="lg:col-span-2">
                       <div className="space-y-1">
                         <div className="text-sm text-gray-500">
                           Maturity
@@ -369,14 +398,14 @@ export default function PortfolioPage() {
                       </div>
                     </div>
 
-                    {/* Sold Status */}
-                    <div className="lg:col-span-1">
+                    {/* Status */}
+                    <div className="lg:col-span-3">
                       <div className="space-y-1">
                         <div className="text-sm text-gray-500">
                           Status
                         </div>
                         <div className="font-medium text-orange-600">
-                          {bond.sold}
+                          {calculatePercentageSold(bond.totalUnits, bond.maxUnitsAvailable)}% Sold
                         </div>
                       </div>
                     </div>
@@ -386,7 +415,7 @@ export default function PortfolioPage() {
                       <Button 
                         className="w-full bg-green-600 hover:bg-green-700"
                         onClick={() => {
-                          alert(`Buying ${bond.name} - Status: ${bond.sold}`);
+                          window.location.href = `/buy-sell?bondId=${bond.id}&type=buy`;
                         }}
                       >
                         Buy Bond
