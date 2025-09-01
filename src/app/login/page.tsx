@@ -21,11 +21,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 
-interface LoginProps {
-  onLogin: () => void;
-}
-
-export function Login({ onLogin }: LoginProps) {
+export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -57,7 +53,8 @@ export function Login({ onLogin }: LoginProps) {
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
-      onLogin();
+      // Redirect to dashboard or portfolio after successful login
+      window.location.href = "/portfolio";
     }, 1500);
   };
 

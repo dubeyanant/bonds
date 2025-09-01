@@ -20,7 +20,7 @@ import {
   IndianRupee,
 } from "lucide-react";
 
-export function PortfolioTracker() {
+export default function PortfolioPage() {
   const portfolioSummary = {
     totalValue: 850000,
     totalInvested: 800000,

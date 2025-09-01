@@ -1,49 +1,28 @@
 "use client"
 
-import { useState } from "react";
-import { Login } from "@/components/login";
-import { PortfolioTracker } from "@/components/portfolio";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Home() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
 
-  const handleLogin = () => {
-    setIsLoggedIn(true);
-  };
+  useEffect(() => {
+    // Redirect to login page on app load
+    router.push("/login");
+  }, [router]);
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-  };
-
-  if (isLoggedIn) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        {/* Header with logout */}
-        <div className="bg-white shadow-sm border-b">
-          <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-            <div className="flex items-center gap-3">
-              <div className="bg-blue-600 p-2 rounded-lg">
-                <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>
-              </div>
-              <div>
-                <div className="text-xl font-bold text-blue-600">MBond</div>
-                <div className="text-xs text-gray-600">Master Indian Bond Markets</div>
-              </div>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-            >
-              Logout
-            </button>
-          </div>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
+      <div className="text-center">
+        <div className="bg-blue-600 p-4 rounded-lg inline-block mb-4">
+          <svg className="h-12 w-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+          </svg>
         </div>
-        <PortfolioTracker />
+        <h1 className="text-3xl font-bold text-blue-600 mb-2">MBond</h1>
+        <p className="text-gray-600">Master Indian Bond Markets</p>
+        <p className="text-sm text-gray-500 mt-4">Redirecting to login...</p>
       </div>
-    );
-  }
-
-  return <Login onLogin={handleLogin} />;
+    </div>
+  );
 }
