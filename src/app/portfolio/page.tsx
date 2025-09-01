@@ -19,126 +19,9 @@ import {
   Building,
   IndianRupee,
 } from "lucide-react";
+import { portfolioSummary, portfolioHoldings, newBonds } from "@/lib/mockData";
 
 export default function PortfolioPage() {
-  const portfolioSummary = {
-    totalValue: 850000,
-    totalInvested: 800000,
-    totalGain: 50000,
-    gainPercentage: 6.25,
-    monthlyIncome: 5680,
-    ytdReturn: 8.2,
-    avgYield: 7.8,
-  };
-
-  const holdings = [
-    {
-      id: "1",
-      name: "HDFC Bank Bond Series XV",
-      issuer: "HDFC Bank",
-      type: "Corporate",
-      rating: "AAA",
-      heldQuantity: 50,
-      investedAmount: 49000,
-      maturityDate: "2029-03-20",
-      nextCoupon: "2024-09-20",
-      yieldCurrent: 8.38,
-      maxUnitsAvailable: 50,
-      totalUnits: 100,
-    },
-    {
-      id: "2",
-      name: "10 Year Government Security",
-      issuer: "Government of India",
-      type: "Government",
-      rating: "AAA",
-      heldQuantity: 100,
-      investedAmount: 100000,
-      maturityDate: "2034-01-15",
-      nextCoupon: "2024-10-15",
-      yieldCurrent: 7.35,
-      maxUnitsAvailable: 100,
-      totalUnits: 100,
-    },
-    {
-      id: "3",
-      name: "Reliance Industries Bond",
-      issuer: "Reliance Industries",
-      type: "Corporate",
-      rating: "AAA",
-      heldQuantity: 25,
-      investedAmount: 25250,
-      maturityDate: "2026-06-15",
-      nextCoupon: "2024-12-15",
-      yieldCurrent: 8.26,
-      maxUnitsAvailable: 30,
-      totalUnits: 100,
-    },
-  ];
-
-  const newBonds = [
-    {
-      id: "nb1",
-      name: "State Bank of India Bond 2029",
-      issuer: "State Bank of India",
-      type: "Corporate",
-      rating: "AAA",
-      maturityDate: "2029-12-15",
-      couponRate: 8.5,
-      yieldCurrent: 8.55,
-      maxUnitsAvailable: 75,
-      totalUnits: 100,
-    },
-    {
-      id: "nb2",
-      name: "15 Year Government Security",
-      issuer: "Government of India",
-      type: "Government",
-      rating: "AAA",
-      maturityDate: "2039-06-20",
-      couponRate: 7.8,
-      yieldCurrent: 7.68,
-      maxUnitsAvailable: 20,
-      totalUnits: 100,
-    },
-    {
-      id: "nb3",
-      name: "Tata Steel Bond Series II",
-      issuer: "Tata Steel Limited",
-      type: "Corporate",
-      rating: "AA+",
-      maturityDate: "2027-09-10",
-      couponRate: 8.8,
-      yieldCurrent: 9.02,
-      maxUnitsAvailable: 4,
-      totalUnits: 100,
-    },
-    {
-      id: "nb4",
-      name: "ICICI Bank Perpetual Bond",
-      issuer: "ICICI Bank",
-      type: "Corporate",
-      rating: "AAA",
-      maturityDate: "Perpetual",
-      couponRate: 9.2,
-      yieldCurrent: 8.98,
-      maxUnitsAvailable: 6,
-      totalUnits: 100,
-    },
-    {
-      id: "nb5",
-      name: "Mahindra Finance NCD",
-      issuer: "Mahindra & Mahindra Financial Services",
-      type: "Corporate",
-      rating: "AA",
-      maturityDate: "2026-03-25",
-      couponRate: 9.5,
-      yieldCurrent: 9.89,
-      maxUnitsAvailable: 35,
-      totalUnits: 100,
-    },
-  ];
-
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-IN", {
       style: "currency",
@@ -239,7 +122,7 @@ export default function PortfolioPage() {
 
           {/* Holdings Tab */}
           <TabsContent value="holdings" className="space-y-4">
-            {holdings.map((holding) => (
+            {portfolioHoldings.map((holding) => (
               <Card key={holding.id}>
                 <CardContent className="pt-6">
                   <div className="grid lg:grid-cols-12 gap-4 items-center">
