@@ -60,6 +60,13 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="container mx-auto px-4 py-4">
+          <h1 className="text-2xl font-bold text-gray-800">anyStockBroker</h1>
+        </div>
+      </div>
+      
       <div className="container mx-auto px-4 py-8">
       <div className="flex justify-center">
             <Card className="w-full max-w-md">

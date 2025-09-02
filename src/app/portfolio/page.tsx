@@ -92,6 +92,13 @@ export default function PortfolioPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white shadow-sm border-b">
+        <div className="container mx-auto px-4 py-4">
+          <h1 className="text-2xl font-bold text-gray-800">anyStockBroker</h1>
+        </div>
+      </div>
+      
       <div className="container mx-auto px-4 md:px-16 lg:px-40 py-8">
         {/* Portfolio Summary */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -106,28 +113,6 @@ export default function PortfolioPage() {
               <div className="text-2xl font-bold">
                 {formatCurrency((portfolioSummary.totalInvested * 10.22 / 100) + portfolioSummary.totalInvested)}
               </div>
-              {/* <div className="text-2xl font-bold">
-                {formatCurrency(portfolioSummary.totalValue)}
-              </div> */}
-              <div
-                className={`text-sm flex items-center gap-1 text-green-600`}
-              >
-                <TrendingUp className="h-4 w-4" />
-                10.22%
-              </div>
-              {/* <div
-                className={`text-sm flex items-center gap-1 ${portfolioSummary.gainPercentage >= 0 ? "text-green-600" : "text-red-600"}`}
-              >
-                {portfolioSummary.gainPercentage >= 0 ? (
-                  <TrendingUp className="h-4 w-4" />
-                ) : (
-                  <TrendingDown className="h-4 w-4" />
-                )}
-                {portfolioSummary.gainPercentage >= 0
-                  ? "+"
-                  : ""}
-                {portfolioSummary.gainPercentage}%
-              </div> */}
             </CardContent>
           </Card>
 
@@ -145,12 +130,6 @@ export default function PortfolioPage() {
                 {formatCurrency(portfolioSummary.totalInvested * 10.22 / 100)}
 
               </div>
-              {/* <div
-                className={`text-2xl font-bold ${portfolioSummary.totalGain >= 0 ? "text-green-600" : "text-red-600"}`}
-              >
-                {portfolioSummary.totalGain >= 0 ? "+" : ""}
-                {formatCurrency(portfolioSummary.totalGain)}
-              </div> */}
               <div className="text-sm text-gray-500">
                 Invested:{" "}
                 {formatCurrency(portfolioSummary.totalInvested)}
@@ -161,16 +140,13 @@ export default function PortfolioPage() {
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center gap-2 mb-2">
-                <PieChart className="h-5 w-5 text-orange-600" />
+                <PieChart className="h-5 w-5 text-yellow-600" />
                 <span className="text-sm text-gray-600">
-                  YTD Return
+                  Total Yield
                 </span>
               </div>
               <div className="text-2xl font-bold text-green-600">
                 +10.22%
-              </div>
-              <div className="text-sm text-gray-500">
-                Since Jan 2024
               </div>
             </CardContent>
           </Card>
@@ -195,7 +171,7 @@ export default function PortfolioPage() {
                           <Building className="h-5 w-5 text-blue-600" />
                         </div>
                         <div>
-                          <h3 className="font-medium mb-1">
+                          <h3 className="font-medium mb-1 text-sm">
                             {holding.name}
                           </h3>
                           <p className="text-sm text-gray-600 mb-2">
@@ -295,7 +271,7 @@ export default function PortfolioPage() {
                             <Building className="h-5 w-5 text-green-600" />
                           </div>
                           <div>
-                            <h3 className="font-medium mb-1">
+                            <h3 className="font-medium mb-1 text-sm">
                               {bond.name}
                             </h3>
                             <p className="text-sm text-gray-600 mb-2">
@@ -360,7 +336,7 @@ export default function PortfolioPage() {
                     <div className="flex justify-end mt-4 pt-4 border-t">
                       <Button
                         size="sm"
-                        className="bg-green-500 hover:bg-green-700"
+                        // className="bg-green-200 hover:bg-green-500 text-green-800 hover:text-green-200 border-green-800 border-1"
                         onClick={() => {
                           window.location.href = `/buy-sell?bondId=${bond.id}&type=buy`;
                         }}
