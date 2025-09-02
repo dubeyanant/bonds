@@ -40,7 +40,7 @@ export default function PortfolioPage() {
     const heldBonds = BondStateManager.getHeldBonds();
     const availableBonds = BondStateManager.getAvailableBonds();
     const summary = BondStateManager.getPortfolioSummary();
-    
+
     setHoldings(heldBonds);
     setAvailableBonds(availableBonds);
     setPortfolioSummary(summary);
@@ -48,21 +48,21 @@ export default function PortfolioPage() {
 
   useEffect(() => {
     loadBondData();
-    
+
     // Listen for storage changes to update when transactions occur in other tabs
     const handleStorageChange = () => {
       loadBondData();
     };
-    
+
     window.addEventListener('storage', handleStorageChange);
-    
+
     // Listen for custom bond state change events
     const handleBondStateChange = () => {
       loadBondData();
     };
-    
+
     window.addEventListener('bondStateChanged', handleBondStateChange);
-    
+
     return () => {
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('bondStateChanged', handleBondStateChange);
@@ -104,9 +104,18 @@ export default function PortfolioPage() {
                 </span>
               </div>
               <div className="text-2xl font-bold">
-                {formatCurrency(portfolioSummary.totalValue)}
+                {formatCurrency((portfolioSummary.totalInvested * 10.22 / 100) + portfolioSummary.totalInvested)}
               </div>
+              {/* <div className="text-2xl font-bold">
+                {formatCurrency(portfolioSummary.totalValue)}
+              </div> */}
               <div
+                className={`text-sm flex items-center gap-1 text-green-600`}
+              >
+                <TrendingUp className="h-4 w-4" />
+                10.22%
+              </div>
+              {/* <div
                 className={`text-sm flex items-center gap-1 ${portfolioSummary.gainPercentage >= 0 ? "text-green-600" : "text-red-600"}`}
               >
                 {portfolioSummary.gainPercentage >= 0 ? (
@@ -118,7 +127,7 @@ export default function PortfolioPage() {
                   ? "+"
                   : ""}
                 {portfolioSummary.gainPercentage}%
-              </div>
+              </div> */}
             </CardContent>
           </Card>
 
@@ -131,11 +140,17 @@ export default function PortfolioPage() {
                 </span>
               </div>
               <div
+                className={`text-2xl font-bold text-green-600`}
+              >
+                {formatCurrency(portfolioSummary.totalInvested * 10.22 / 100)}
+
+              </div>
+              {/* <div
                 className={`text-2xl font-bold ${portfolioSummary.totalGain >= 0 ? "text-green-600" : "text-red-600"}`}
               >
                 {portfolioSummary.totalGain >= 0 ? "+" : ""}
                 {formatCurrency(portfolioSummary.totalGain)}
-              </div>
+              </div> */}
               <div className="text-sm text-gray-500">
                 Invested:{" "}
                 {formatCurrency(portfolioSummary.totalInvested)}
@@ -152,7 +167,7 @@ export default function PortfolioPage() {
                 </span>
               </div>
               <div className="text-2xl font-bold text-green-600">
-                +{portfolioSummary.ytdReturn}%
+                +10.22%
               </div>
               <div className="text-sm text-gray-500">
                 Since Jan 2024
@@ -172,7 +187,7 @@ export default function PortfolioPage() {
             {holdings.map((holding) => (
               <Card key={holding.id}>
                 <CardContent className="pt-6">
-                  <div className="grid lg:grid-cols-12 gap-4 items-center">
+                  <div className="flex gap-4 justify-between items-center">
                     {/* Bond Info */}
                     <div className="lg:col-span-4">
                       <div className="flex items-start gap-3">
@@ -272,7 +287,7 @@ export default function PortfolioPage() {
               <Card key={bond.id}>
                 <CardContent className="pt-6">
                   <div>
-                    <div className="flex justify-between px-4 pb-4 items-center">
+                    <div className="flex justify-between items-center">
                       {/* Bond Info */}
                       <div className="lg:col-span-4">
                         <div className="flex items-start gap-3">
@@ -291,8 +306,8 @@ export default function PortfolioPage() {
                                 {bond.type}
                               </Badge>
                               <Badge className={`${bond.rating === 'AAA' ? 'bg-green-100 text-green-800' :
-                                  bond.rating === 'AA+' ? 'bg-blue-100 text-blue-800' :
-                                    'bg-yellow-100 text-yellow-800'
+                                bond.rating === 'AA+' ? 'bg-blue-100 text-blue-800' :
+                                  'bg-yellow-100 text-yellow-800'
                                 }`}>
                                 {bond.rating}
                               </Badge>
@@ -342,9 +357,10 @@ export default function PortfolioPage() {
                     </div>
 
                     {/* Buy Button */}
-                    <div className="lg:col-span-2">
+                    <div className="flex justify-end mt-4 pt-4 border-t">
                       <Button
-                        className="w-full bg-green-600 hover:bg-green-700"
+                        size="sm"
+                        className="bg-green-500 hover:bg-green-700"
                         onClick={() => {
                           window.location.href = `/buy-sell?bondId=${bond.id}&type=buy`;
                         }}
