@@ -15,7 +15,9 @@ import {
   AlertTriangle,
   CheckCircle,
   Info,
-  Calendar
+  Calendar,
+  Plus,
+  Minus
 } from "lucide-react";
 
 interface BondData {
@@ -79,6 +81,11 @@ export function BuySell({ bondData, transactionType, onBack, onOrderPlaced }: Bu
 
   // Valuation periods for cards - dynamically generated
   const generateValuationPeriods = () => {
+    if (transactionType === 'sell') {
+      // For selling, only show "Sell Now" (3 months) and "On Maturity"
+      return [3, remainingMonths];
+    }
+    
     const periods = [];
     const maxDuration = Math.min(remainingMonths, 36);
     for (let i = 3; i <= maxDuration; i += 3) {
@@ -202,12 +209,12 @@ export function BuySell({ bondData, transactionType, onBack, onOrderPlaced }: Bu
                     </div>
                     <div>
                       <Label className="text-sm text-gray-600">Credit Rating</Label>
-                      <Badge className="bg-green-100 text-green-800">{bondData.rating}</Badge>
+                      <p className="font-medium">{bondData.rating}</p>
                     </div>
                   </div>
                   <div className="space-y-3">
                     <div>
-                      <Label className="text-sm text-gray-600">Current Price</Label>
+                      <Label className="text-sm text-gray-600">{transactionType === 'buy' ? 'Current Price' : 'Avg Buy Price'}</Label>
                       <p className="font-medium">₹{bondData.currentPrice}</p>
                     </div>
                     <div>
@@ -249,31 +256,52 @@ export function BuySell({ bondData, transactionType, onBack, onOrderPlaced }: Bu
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Units Input */}
+                  {/* Units Selection with Plus/Minus */}
                   <div className="space-y-2">
-                    <Label htmlFor="units">
+                    <Label>
                       Number of Units to {transactionType === 'buy' ? 'Purchase' : 'Sell'} *
                     </Label>
-                    <Input
-                      id="units"
-                      type="number"
-                      placeholder={`Enter units (1-${maxUnits})`}
-                      value={units}
-                      onChange={(e) => {
-                        const value = parseInt(e.target.value) || 0;
-                        if (value >= 1 && value <= maxUnits) {
-                          setUnits(e.target.value);
-                        } else if (value > maxUnits) {
-                          setUnits(maxUnits.toString());
-                        } else {
-                          setUnits(e.target.value);
-                        }
-                      }}
-                      min={minUnits}
-                      max={maxUnits}
-                      step={1}
-                      className={errors.units ? "border-red-500" : ""}
-                    />
+                    <div className="flex items-center gap-3">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="h-10 w-10 p-0"
+                        onClick={() => {
+                          const currentUnits = parseInt(units) || 0;
+                          if (currentUnits > minUnits) {
+                            setUnits((currentUnits - 1).toString());
+                          }
+                        }}
+                        disabled={parseInt(units) <= minUnits}
+                      >
+                        <Minus className="h-4 w-4" />
+                      </Button>
+                      
+                      <div className="flex-1 text-center">
+                        <div className="text-2xl font-bold text-gray-900">
+                          {units || 0}
+                        </div>
+                        <div className="text-xs text-gray-500">units</div>
+                      </div>
+                      
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="h-10 w-10 p-0"
+                        onClick={() => {
+                          const currentUnits = parseInt(units) || 0;
+                          if (currentUnits < maxUnits) {
+                            setUnits((currentUnits + 1).toString());
+                          }
+                        }}
+                        disabled={parseInt(units) >= maxUnits}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    
                     {errors.units && (
                       <p className="text-sm text-red-600 flex items-center gap-1">
                         <AlertTriangle className="h-4 w-4" />
@@ -284,7 +312,6 @@ export function BuySell({ bondData, transactionType, onBack, onOrderPlaced }: Bu
                       Available: {availableUnits} units • Min: {minUnits} unit
                     </p>
                   </div>
-
 
                   {/* Transaction Summary */}
                   {unitsCount > 0 && (
@@ -301,7 +328,7 @@ export function BuySell({ bondData, transactionType, onBack, onOrderPlaced }: Bu
                         </div>
                         <Separator />
                         <div className="flex justify-between font-medium">
-                          <span className="text-blue-700">Total Amount:</span>
+                          <span className="text-blue-700">{transactionType === 'buy' ? 'Total Amount:' : 'Current Price:'}</span>
                           <span className="text-lg">{formatCurrency(totalAmount)}</span>
                         </div>
                       </div>
@@ -397,6 +424,18 @@ export function BuySell({ bondData, transactionType, onBack, onOrderPlaced }: Bu
                   <div className="space-y-3">
                     {valuationPeriods.map((months) => {
                       const calc = calculateReturns(months, unitsCount);
+                      const isThreeMonths = months === 3;
+                      const isMaturity = months === remainingMonths;
+                      
+                      let cardLabel = `${months} Months`;
+                      if (transactionType === 'sell') {
+                        if (isThreeMonths) {
+                          cardLabel = 'Sell Now';
+                        } else if (isMaturity) {
+                          cardLabel = `On Maturity (${months} months)`;
+                        }
+                      }
+                      
                       return (
                         <div
                           key={months}
@@ -408,9 +447,12 @@ export function BuySell({ bondData, transactionType, onBack, onOrderPlaced }: Bu
                         >
                           <div className="flex justify-between items-center">
                             <div>
-                              <div className="font-medium">{months} Months</div>
+                              <div className="font-medium">{cardLabel}</div>
                               <div className="text-xs text-gray-500">
-                                {calc.returnPercentage.toFixed(2)}% return
+                                {transactionType === 'sell' && isThreeMonths 
+                                  ? `Price: ₹${bondData.currentPrice + calc.returns/unitsCount} (incl. interest)`
+                                  : `${calc.returnPercentage.toFixed(2)}% return`
+                                }
                               </div>
                             </div>
                             <div className="text-right">

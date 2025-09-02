@@ -212,9 +212,9 @@ export default function PortfolioPage() {
                   </div>
 
                   <div className="flex justify-end gap-2 mt-4 pt-4 border-t">
-              
-                    <Button 
-                      variant="outline" 
+
+                    <Button
+                      variant="outline"
                       size="sm"
                       onClick={() => {
                         window.location.href = `/buy-sell?bondId=${holding.id}&type=sell`;
@@ -222,7 +222,7 @@ export default function PortfolioPage() {
                     >
                       Sell
                     </Button>
-                    <Button 
+                    <Button
                       size="sm"
                       onClick={() => {
                         window.location.href = `/buy-sell?bondId=${holding.id}&type=buy`;
@@ -241,78 +241,79 @@ export default function PortfolioPage() {
             {newBonds.map((bond) => (
               <Card key={bond.id}>
                 <CardContent className="pt-6">
-                  <div className="grid lg:grid-cols-12 gap-4 items-center">
-                    {/* Bond Info */}
-                    <div className="lg:col-span-4">
-                      <div className="flex items-start gap-3">
-                        <div className="bg-green-100 p-2 rounded-lg">
-                          <Building className="h-5 w-5 text-green-600" />
-                        </div>
-                        <div>
-                          <h3 className="font-medium mb-1">
-                            {bond.name}
-                          </h3>
-                          <p className="text-sm text-gray-600 mb-2">
-                            {bond.issuer}
-                          </p>
-                          <div className="flex items-center gap-2">
-                            <Badge variant="outline">
-                              {bond.type}
-                            </Badge>
-                            <Badge className={`${
-                              bond.rating === 'AAA' ? 'bg-green-100 text-green-800' :
-                              bond.rating === 'AA+' ? 'bg-blue-100 text-blue-800' :
-                              'bg-yellow-100 text-yellow-800'
-                            }`}>
-                              {bond.rating}
-                            </Badge>
+                  <div>
+                    <div className="flex justify-between px-4 pb-4 items-center">
+                      {/* Bond Info */}
+                      <div className="lg:col-span-4">
+                        <div className="flex items-start gap-3">
+                          <div className="bg-green-100 p-2 rounded-lg">
+                            <Building className="h-5 w-5 text-green-600" />
+                          </div>
+                          <div>
+                            <h3 className="font-medium mb-1">
+                              {bond.name}
+                            </h3>
+                            <p className="text-sm text-gray-600 mb-2">
+                              {bond.issuer}
+                            </p>
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline">
+                                {bond.type}
+                              </Badge>
+                              <Badge className={`${bond.rating === 'AAA' ? 'bg-green-100 text-green-800' :
+                                  bond.rating === 'AA+' ? 'bg-blue-100 text-blue-800' :
+                                    'bg-yellow-100 text-yellow-800'
+                                }`}>
+                                {bond.rating}
+                              </Badge>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Yield & Coupon */}
-                    <div className="lg:col-span-2">
-                      <div className="space-y-1">
-                        <div className="text-sm text-gray-500">
-                          Current YTM
-                        </div>
-                        <div className="font-medium text-green-600">
-                          {bond.yieldCurrent}%
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          Coupon: {bond.couponRate}%
+                      {/* Yield & Coupon */}
+                      <div className="lg:col-span-2">
+                        <div className="space-y-1">
+                          <div className="text-sm text-gray-500">
+                            Current YTM
+                          </div>
+                          <div className="font-medium text-green-600">
+                            {bond.yieldCurrent}%
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            Coupon: {bond.couponRate}%
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Maturity */}
-                    <div className="lg:col-span-2">
-                      <div className="space-y-1">
-                        <div className="text-sm text-gray-500">
-                          Maturity
-                        </div>
-                        <div className="font-medium">
-                          {bond.maturityDate === "Perpetual" ? "Perpetual" : formatDate(bond.maturityDate)}
+                      {/* Maturity */}
+                      <div className="lg:col-span-2">
+                        <div className="space-y-1">
+                          <div className="text-sm text-gray-500">
+                            Maturity
+                          </div>
+                          <div className="font-medium">
+                            {bond.maturityDate === "Perpetual" ? "Perpetual" : formatDate(bond.maturityDate)}
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Status */}
-                    <div className="lg:col-span-3">
-                      <div className="space-y-1">
-                        <div className="text-sm text-gray-500">
-                          Status
-                        </div>
-                        <div className="font-medium text-orange-600">
-                          {calculatePercentageSold(bond.totalUnits, bond.maxUnitsAvailable)}% Sold
+                      {/* Status */}
+                      <div className="lg:col-span-3">
+                        <div className="space-y-1">
+                          <div className="text-sm text-gray-500">
+                            Status
+                          </div>
+                          <div className="font-medium text-orange-600">
+                            {calculatePercentageSold(bond.totalUnits, bond.maxUnitsAvailable)}% Sold
+                          </div>
                         </div>
                       </div>
                     </div>
 
                     {/* Buy Button */}
                     <div className="lg:col-span-2">
-                      <Button 
+                      <Button
                         className="w-full bg-green-600 hover:bg-green-700"
                         onClick={() => {
                           window.location.href = `/buy-sell?bondId=${bond.id}&type=buy`;
