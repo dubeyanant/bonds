@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
-import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { Badge } from "./ui/badge";
 import { Alert, AlertDescription } from "./ui/alert";
 import { Separator } from "./ui/separator";
 import {
@@ -11,7 +9,6 @@ import {
   Building,
   TrendingUp,
   Calculator,
-  DollarSign,
   AlertTriangle,
   CheckCircle,
   Info,
@@ -19,26 +16,11 @@ import {
   Plus,
   Minus
 } from "lucide-react";
+import { Bond } from "@/lib/mockData";
 
-interface BondData {
-  id: string;
-  name: string;
-  issuer: string;
-  type: string;
-  rating: string;
-  currentPrice: number;
-  currentYTM: number;
-  quantity: number; // Held units
-  maxUnitsAvailable: number; // Maximum units available for purchase
-  totalUnits: number; // Total units issued (default 100)
-  faceValue: number;
-  maturityDate: string;
-  remainingMonths?: number; // Optional - will be calculated from maturityDate
-  couponRate: number;
-}
 
 interface BuySellProps {
-  bondData: BondData;
+  bondData: Bond;
   transactionType: 'buy' | 'sell';
   onBack: () => void;
   onOrderPlaced: (quantity: number) => void;
@@ -74,7 +56,7 @@ export function BuySell({ bondData, transactionType, onBack, onOrderPlaced }: Bu
 
 
   // Calculate available units based on transaction type
-  const availableUnits = transactionType === 'buy' ? bondData.maxUnitsAvailable : bondData.quantity;
+  const availableUnits = transactionType === 'buy' ? bondData.maxUnitsAvailable : (bondData.heldQuantity || 0);
   const minUnits = 1;
   const maxUnits = availableUnits;
 

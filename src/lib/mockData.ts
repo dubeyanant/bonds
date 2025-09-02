@@ -1,4 +1,4 @@
-export interface BondData {
+export interface Bond {
   id: string;
   name: string;
   issuer: string;
@@ -6,45 +6,26 @@ export interface BondData {
   rating: string;
   currentPrice: number;
   currentYTM: number;
-  quantity: number;
+  couponRate: number;
+  maturityDate: string;
   maxUnitsAvailable: number;
   totalUnits: number;
   faceValue: number;
-  maturityDate: string;
   remainingMonths?: number;
-  couponRate: number;
+  // Portfolio-specific fields (optional)
+  heldQuantity?: number;
+  investedAmount?: number;
+  nextCoupon?: string;
 }
 
-export interface PortfolioHolding {
-  id: string;
-  name: string;
-  issuer: string;
-  type: string;
-  rating: string;
-  heldQuantity: number;
-  investedAmount: number;
-  maturityDate: string;
-  nextCoupon: string;
-  yieldCurrent: number;
-  maxUnitsAvailable: number;
-  totalUnits: number;
-}
+// Legacy type aliases for backward compatibility
+export type BondData = Bond;
+export type PortfolioHolding = Bond;
+export type NewBond = Bond;
 
-export interface NewBond {
-  id: string;
-  name: string;
-  issuer: string;
-  type: string;
-  rating: string;
-  maturityDate: string;
-  couponRate: number;
-  yieldCurrent: number;
-  maxUnitsAvailable: number;
-  totalUnits: number;
-}
-
-export const mockBondData: { [key: string]: BondData } = {
-  "1": {
+export const allBonds: Bond[] = [
+  // Held bonds (heldQuantity > 0)
+  {
     id: "1",
     name: "HDFC Bank Bond Series XV",
     issuer: "HDFC Bank",
@@ -52,14 +33,16 @@ export const mockBondData: { [key: string]: BondData } = {
     rating: "AAA",
     currentPrice: 980,
     currentYTM: 8.38,
-    quantity: 50,
+    couponRate: 8.25,
+    maturityDate: "2027-1-20",
     maxUnitsAvailable: 50,
     totalUnits: 100,
     faceValue: 1000,
-    maturityDate: "2025-11-20",
-    couponRate: 8.25,
+    heldQuantity: 50,
+    investedAmount: 49000,
+    nextCoupon: "2024-10-20",
   },
-  "2": {
+  {
     id: "2",
     name: "10 Year Government Security",
     issuer: "Government of India",
@@ -67,14 +50,16 @@ export const mockBondData: { [key: string]: BondData } = {
     rating: "AAA",
     currentPrice: 1000,
     currentYTM: 7.35,
-    quantity: 100,
+    couponRate: 7.35,
+    maturityDate: "2026-01-15",
     maxUnitsAvailable: 100,
     totalUnits: 100,
     faceValue: 1000,
-    maturityDate: "2026-01-15",
-    couponRate: 7.35,
+    heldQuantity: 100,
+    investedAmount: 100000,
+    nextCoupon: "2024-10-15",
   },
-  "3": {
+  {
     id: "3",
     name: "Reliance Industries Bond",
     issuer: "Reliance Industries",
@@ -82,14 +67,17 @@ export const mockBondData: { [key: string]: BondData } = {
     rating: "AAA",
     currentPrice: 1010,
     currentYTM: 8.26,
-    quantity: 25,
+    couponRate: 8.50,
+    maturityDate: "2026-06-15",
     maxUnitsAvailable: 30,
     totalUnits: 100,
     faceValue: 1000,
-    maturityDate: "2026-06-15",
-    couponRate: 8.50,
+    heldQuantity: 25,
+    investedAmount: 25250,
+    nextCoupon: "2024-12-15",
   },
-  "nb1": {
+  // Available bonds (heldQuantity = 0 or undefined)
+  {
     id: "nb1",
     name: "State Bank of India Bond 2029",
     issuer: "State Bank of India",
@@ -97,14 +85,14 @@ export const mockBondData: { [key: string]: BondData } = {
     rating: "AAA",
     currentPrice: 995,
     currentYTM: 8.55,
-    quantity: 0,
+    couponRate: 8.50,
+    maturityDate: "2025-12-15",
     maxUnitsAvailable: 75,
     totalUnits: 100,
     faceValue: 1000,
-    maturityDate: "2025-12-15",
-    couponRate: 8.50,
+    heldQuantity: 0,
   },
-  "nb2": {
+  {
     id: "nb2",
     name: "15 Year Government Security",
     issuer: "Government of India",
@@ -112,14 +100,14 @@ export const mockBondData: { [key: string]: BondData } = {
     rating: "AAA",
     currentPrice: 1005,
     currentYTM: 7.68,
-    quantity: 0,
+    couponRate: 7.80,
+    maturityDate: "2026-06-20",
     maxUnitsAvailable: 20,
     totalUnits: 100,
     faceValue: 1000,
-    maturityDate: "2026-06-20",
-    couponRate: 7.80,
+    heldQuantity: 0,
   },
-  "nb3": {
+  {
     id: "nb3",
     name: "Tata Steel Bond Series II",
     issuer: "Tata Steel Limited",
@@ -127,14 +115,14 @@ export const mockBondData: { [key: string]: BondData } = {
     rating: "AA+",
     currentPrice: 975,
     currentYTM: 9.02,
-    quantity: 0,
+    couponRate: 8.80,
+    maturityDate: "2026-09-10",
     maxUnitsAvailable: 4,
     totalUnits: 100,
     faceValue: 1000,
-    maturityDate: "2026-09-10",
-    couponRate: 8.80,
+    heldQuantity: 0,
   },
-  "nb4": {
+  {
     id: "nb4",
     name: "Mahindra Finance NCD",
     issuer: "Mahindra & Mahindra Financial Services",
@@ -142,122 +130,50 @@ export const mockBondData: { [key: string]: BondData } = {
     rating: "AA",
     currentPrice: 960,
     currentYTM: 9.89,
-    quantity: 0,
+    couponRate: 9.50,
+    maturityDate: "2026-03-25",
     maxUnitsAvailable: 35,
     totalUnits: 100,
     faceValue: 1000,
-    maturityDate: "2026-03-25",
-    couponRate: 9.50,
-  },
-};
-
-export const portfolioHoldings: PortfolioHolding[] = [
-  {
-    id: "1",
-    name: "HDFC Bank Bond Series XV",
-    issuer: "HDFC Bank",
-    type: "Corporate",
-    rating: "AAA",
-    heldQuantity: 50,
-    investedAmount: 49000,
-    maturityDate: "2029-03-20",
-    nextCoupon: "2024-09-20",
-    yieldCurrent: 8.38,
-    maxUnitsAvailable: 50,
-    totalUnits: 100,
+    heldQuantity: 0,
   },
   {
-    id: "2",
-    name: "10 Year Government Security",
-    issuer: "Government of India",
-    type: "Government",
-    rating: "AAA",
-    heldQuantity: 100,
-    investedAmount: 100000,
-    maturityDate: "2034-01-15",
-    nextCoupon: "2024-10-15",
-    yieldCurrent: 7.35,
-    maxUnitsAvailable: 100,
-    totalUnits: 100,
-  },
-  {
-    id: "3",
-    name: "Reliance Industries Bond",
-    issuer: "Reliance Industries",
-    type: "Corporate",
-    rating: "AAA",
-    heldQuantity: 25,
-    investedAmount: 25250,
-    maturityDate: "2026-06-15",
-    nextCoupon: "2024-12-15",
-    yieldCurrent: 8.26,
-    maxUnitsAvailable: 30,
-    totalUnits: 100,
-  },
-];
-
-export const newBonds: NewBond[] = [
-  {
-    id: "nb1",
-    name: "State Bank of India Bond 2029",
-    issuer: "State Bank of India",
-    type: "Corporate",
-    rating: "AAA",
-    maturityDate: "2029-12-15",
-    couponRate: 8.5,
-    yieldCurrent: 8.55,
-    maxUnitsAvailable: 75,
-    totalUnits: 100,
-  },
-  {
-    id: "nb2",
-    name: "15 Year Government Security",
-    issuer: "Government of India",
-    type: "Government",
-    rating: "AAA",
-    maturityDate: "2039-06-20",
-    couponRate: 7.8,
-    yieldCurrent: 7.68,
-    maxUnitsAvailable: 20,
-    totalUnits: 100,
-  },
-  {
-    id: "nb3",
-    name: "Tata Steel Bond Series II",
-    issuer: "Tata Steel Limited",
-    type: "Corporate",
-    rating: "AA+",
-    maturityDate: "2027-09-10",
-    couponRate: 8.8,
-    yieldCurrent: 9.02,
-    maxUnitsAvailable: 4,
-    totalUnits: 100,
-  },
-  {
-    id: "nb4",
+    id: "nb5",
     name: "ICICI Bank Perpetual Bond",
     issuer: "ICICI Bank",
     type: "Corporate",
     rating: "AAA",
-    maturityDate: "Perpetual",
+    currentPrice: 1000, // Estimated price
+    currentYTM: 8.98,
     couponRate: 9.2,
-    yieldCurrent: 8.98,
+    maturityDate: "Perpetual",
     maxUnitsAvailable: 6,
     totalUnits: 100,
-  },
-  {
-    id: "nb5",
-    name: "Mahindra Finance NCD",
-    issuer: "Mahindra & Mahindra Financial Services",
-    type: "Corporate",
-    rating: "AA",
-    maturityDate: "2026-03-25",
-    couponRate: 9.5,
-    yieldCurrent: 9.89,
-    maxUnitsAvailable: 35,
-    totalUnits: 100,
+    faceValue: 1000,
+    heldQuantity: 0,
   },
 ];
+
+// Helper functions to filter bonds
+export const getHeldBonds = (): Bond[] => {
+  return allBonds.filter(bond => (bond.heldQuantity || 0) > 0);
+};
+
+export const getAvailableBonds = (): Bond[] => {
+  return allBonds.filter(bond => (bond.heldQuantity || 0) === 0);
+};
+
+export const getBondById = (id: string): Bond | undefined => {
+  return allBonds.find(bond => bond.id === id);
+};
+
+// Legacy exports for backward compatibility
+export const mockBondData: { [key: string]: Bond } = {
+  ...Object.fromEntries(allBonds.map(bond => [bond.id, bond]))
+};
+
+export const portfolioHoldings: Bond[] = getHeldBonds();
+export const newBonds: Bond[] = getAvailableBonds();
 
 export const portfolioSummary = {
   totalValue: 850000,

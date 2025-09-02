@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { BuySell } from "@/components/buySell";
-import { BondData, mockBondData } from "@/lib/mockData";
+import { Bond, getBondById } from "@/lib/mockData";
 import {
   Dialog,
   DialogContent,
@@ -18,7 +18,7 @@ import { CheckCircle } from "lucide-react";
 export default function BuySellPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [bondData, setBondData] = useState<BondData | null>(null);
+  const [bondData, setBondData] = useState<Bond | null>(null);
   const [transactionType, setTransactionType] = useState<'buy' | 'sell'>('buy');
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [orderDetails, setOrderDetails] = useState<{
@@ -39,7 +39,7 @@ export default function BuySellPage() {
 
     setTransactionType(type);
 
-    const bond = mockBondData[bondId];
+    const bond = getBondById(bondId);
     if (bond) {
       setBondData(bond);
     } else {

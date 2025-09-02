@@ -62,7 +62,7 @@ export default function PortfolioPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-16 lg:px-40 py-8">
+      <div className="container mx-auto px-4 md:px-16 lg:px-40 py-8">
         {/* Portfolio Summary */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <Card>
@@ -175,10 +175,10 @@ export default function PortfolioPage() {
                           Held Quantity
                         </div>
                         <div className="font-medium">
-                          {holding.heldQuantity} units
+                          {holding.heldQuantity || 0} units
                         </div>
                         <div className="text-sm text-gray-500">
-                          Invested: {formatCurrency(holding.investedAmount)}
+                          Invested: {formatCurrency(holding.investedAmount || 0)}
                         </div>
                       </div>
                     </div>
@@ -190,7 +190,7 @@ export default function PortfolioPage() {
                           Current YTM
                         </div>
                         <div className="font-medium text-green-600">
-                          {holding.yieldCurrent}%
+                          {holding.currentYTM}%
                         </div>
                         <div className="text-sm text-gray-500">
                           Maturity: {formatDate(holding.maturityDate)}
@@ -205,7 +205,7 @@ export default function PortfolioPage() {
                           Next Coupon
                         </div>
                         <div className="font-medium">
-                          {formatDate(holding.nextCoupon)}
+                          {holding.nextCoupon ? formatDate(holding.nextCoupon) : 'N/A'}
                         </div>
                       </div>
                     </div>
@@ -278,7 +278,7 @@ export default function PortfolioPage() {
                             Current YTM
                           </div>
                           <div className="font-medium text-green-600">
-                            {bond.yieldCurrent}%
+                            {bond.currentYTM}%
                           </div>
                           <div className="text-sm text-gray-500">
                             Coupon: {bond.couponRate}%
