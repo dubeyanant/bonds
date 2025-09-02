@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { BuySell } from "@/components/buySell";
-import { Bond, getBondById } from "@/lib/mockData";
+import { Bond } from "@/lib/mockData";
+import { BondStateManager } from "@/lib/bondStateManager";
 import {
   Dialog,
   DialogContent,
@@ -39,7 +40,7 @@ export default function BuySellPage() {
 
     setTransactionType(type);
 
-    const bond = getBondById(bondId);
+    const bond = BondStateManager.getBondById(bondId);
     if (bond) {
       setBondData(bond);
     } else {
@@ -53,12 +54,33 @@ export default function BuySellPage() {
 
   const handleOrderPlaced = (quantity: number) => {
     if (bondData) {
-      setOrderDetails({
-        bondName: bondData.name,
-        quantity,
-        type: transactionType
-      });
-      setShowSuccessDialog(true);
+      let result;
+      
+      if (transactionType === 'buy') {
+        result = BondStateManager.buyBond(bondData.id, quantity);
+      } else {
+        result = BondStateManager.sellBond(bondData.id, quantity);
+      }
+      
+      if (result.success) {
+        // Update the bond data with latest state
+        const updatedBond = BondStateManager.getBondById(bondData.id);
+        if (updatedBond) {
+          setBondData(updatedBond);
+        }
+        
+        setOrderDetails({
+          bondName: bondData.name,
+          quantity,
+          type: transactionType
+        });
+        setShowSuccessDialog(true);
+        
+        // Trigger a custom event to notify other components of the state change
+        window.dispatchEvent(new CustomEvent('bondStateChanged'));
+      } else {
+        alert(`Transaction failed: ${result.message}`);
+      }
     }
   };
 
@@ -67,6 +89,21 @@ export default function BuySellPage() {
     setOrderDetails(null);
     router.push('/portfolio');
   };
+  
+  // Listen for bond state changes to update current bond data
+  useEffect(() => {
+    const handleBondStateChange = () => {
+      if (bondData) {
+        const updatedBond = BondStateManager.getBondById(bondData.id);
+        if (updatedBond) {
+          setBondData(updatedBond);
+        }
+      }
+    };
+    
+    window.addEventListener('bondStateChanged', handleBondStateChange);
+    return () => window.removeEventListener('bondStateChanged', handleBondStateChange);
+  }, [bondData]);
 
   if (!bondData) {
     return (

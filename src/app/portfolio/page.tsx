@@ -20,23 +20,53 @@ import {
   Building,
   IndianRupee,
 } from "lucide-react";
-import { portfolioSummary, portfolioHoldings as defaultHoldings, newBonds, PortfolioHolding } from "@/lib/mockData";
+import { PortfolioHolding } from "@/lib/mockData";
+import { BondStateManager } from "@/lib/bondStateManager";
 
 export default function PortfolioPage() {
-  const [holdings, setHoldings] = useState<PortfolioHolding[]>(defaultHoldings);
+  const [holdings, setHoldings] = useState<PortfolioHolding[]>([]);
+  const [availableBonds, setAvailableBonds] = useState<PortfolioHolding[]>([]);
+  const [portfolioSummary, setPortfolioSummary] = useState({
+    totalValue: 0,
+    totalInvested: 0,
+    totalGain: 0,
+    gainPercentage: 0,
+    monthlyIncome: 0,
+    ytdReturn: 0,
+    avgYield: 0
+  });
+
+  const loadBondData = () => {
+    const heldBonds = BondStateManager.getHeldBonds();
+    const availableBonds = BondStateManager.getAvailableBonds();
+    const summary = BondStateManager.getPortfolioSummary();
+    
+    setHoldings(heldBonds);
+    setAvailableBonds(availableBonds);
+    setPortfolioSummary(summary);
+  };
 
   useEffect(() => {
-    // Load holdings from localStorage and merge with default data
-    const savedHoldings = localStorage.getItem('portfolioHoldings');
-    if (savedHoldings) {
-      try {
-        const parsedHoldings = JSON.parse(savedHoldings);
-        setHoldings(parsedHoldings);
-      } catch (error) {
-        console.error('Error parsing saved holdings:', error);
-        setHoldings(defaultHoldings);
-      }
-    }
+    loadBondData();
+    
+    // Listen for storage changes to update when transactions occur in other tabs
+    const handleStorageChange = () => {
+      loadBondData();
+    };
+    
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Listen for custom bond state change events
+    const handleBondStateChange = () => {
+      loadBondData();
+    };
+    
+    window.addEventListener('bondStateChanged', handleBondStateChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('bondStateChanged', handleBondStateChange);
+    };
   }, []);
 
   const formatCurrency = (amount: number) => {
@@ -238,7 +268,7 @@ export default function PortfolioPage() {
 
           {/* New Bonds Tab */}
           <TabsContent value="newbonds" className="space-y-4">
-            {newBonds.map((bond) => (
+            {availableBonds.map((bond) => (
               <Card key={bond.id}>
                 <CardContent className="pt-6">
                   <div>

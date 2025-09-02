@@ -110,13 +110,14 @@ export const allBonds: Bond[] = [
   },
 ];
 
-// Helper functions to filter bonds
+// Helper functions to filter bonds - now deprecated, use BondStateManager instead
+// These are kept for backward compatibility
 export const getHeldBonds = (): Bond[] => {
   return allBonds.filter(bond => (bond.heldQuantity || 0) > 0);
 };
 
 export const getAvailableBonds = (): Bond[] => {
-  return allBonds.filter(bond => (bond.heldQuantity || 0) === 0);
+  return allBonds.filter(bond => bond.maxUnitsAvailable > 0);
 };
 
 export const getBondById = (id: string): Bond | undefined => {
@@ -131,6 +132,7 @@ export const mockBondData: { [key: string]: Bond } = {
 export const portfolioHoldings: Bond[] = getHeldBonds();
 export const newBonds: Bond[] = getAvailableBonds();
 
+// Default portfolio summary - now calculated dynamically by BondStateManager
 export const portfolioSummary = {
   totalValue: 850000,
   totalInvested: 800000,
