@@ -181,7 +181,15 @@ export default function PortfolioPage() {
                             <Badge variant="outline">
                               {holding.type}
                             </Badge>
-                            <Badge className="bg-green-100 text-green-800">
+                            <Badge className={`${
+                              holding.rating === 'AAA' ? 'bg-green-100 text-green-800' :
+                              holding.rating === 'AA+' ? 'bg-blue-100 text-blue-800' :
+                              holding.rating.startsWith('A') ? 'bg-yellow-100 text-yellow-800' :
+                              holding.rating.startsWith('B') ? 'bg-orange-100 text-orange-800' :
+                              holding.rating.startsWith('C') ? 'bg-red-100 text-red-800' :
+                              holding.rating === 'D' ? 'bg-gray-800 text-white' :
+                              'bg-gray-100 text-gray-800'
+                              }`}>
                               {holding.rating}
                             </Badge>
                           </div>
@@ -245,6 +253,7 @@ export default function PortfolioPage() {
                     </Button>
                     <Button
                       size="sm"
+                      disabled={holding.heldQuantity >= 100}
                       onClick={() => {
                         window.location.href = `/buy-sell?bondId=${holding.id}&type=buy`;
                       }}
@@ -281,9 +290,14 @@ export default function PortfolioPage() {
                               <Badge variant="outline">
                                 {bond.type}
                               </Badge>
-                              <Badge className={`${bond.rating === 'AAA' ? 'bg-green-100 text-green-800' :
+                              <Badge className={`${
+                                bond.rating === 'AAA' ? 'bg-green-100 text-green-800' :
                                 bond.rating === 'AA+' ? 'bg-blue-100 text-blue-800' :
-                                  'bg-yellow-100 text-yellow-800'
+                                bond.rating.startsWith('A') ? 'bg-yellow-100 text-yellow-800' :
+                                bond.rating.startsWith('B') ? 'bg-orange-100 text-orange-800' :
+                                bond.rating.startsWith('C') ? 'bg-red-100 text-red-800' :
+                                bond.rating === 'D' ? 'bg-gray-800 text-white' :
+                                'bg-gray-100 text-gray-800'
                                 }`}>
                                 {bond.rating}
                               </Badge>
