@@ -1,10 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Badge } from "./ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Alert, AlertDescription } from "./ui/alert";
 import { Separator } from "./ui/separator";
 import {
@@ -40,7 +39,7 @@ interface BuySellProps {
   bondData: BondData;
   transactionType: 'buy' | 'sell';
   onBack: () => void;
-  onOrderPlaced: () => void;
+  onOrderPlaced: (quantity: number) => void;
 }
 
 export function BuySell({ bondData, transactionType, onBack, onOrderPlaced }: BuySellProps) {
@@ -145,7 +144,7 @@ export function BuySell({ bondData, transactionType, onBack, onOrderPlaced }: Bu
     // Simulate API call
     setTimeout(() => {
       setIsLoading(false);
-      onOrderPlaced();
+      onOrderPlaced(parseInt(units));
     }, 2000);
   };
 

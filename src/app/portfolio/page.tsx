@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -19,9 +20,25 @@ import {
   Building,
   IndianRupee,
 } from "lucide-react";
-import { portfolioSummary, portfolioHoldings, newBonds } from "@/lib/mockData";
+import { portfolioSummary, portfolioHoldings as defaultHoldings, newBonds, PortfolioHolding } from "@/lib/mockData";
 
 export default function PortfolioPage() {
+  const [holdings, setHoldings] = useState<PortfolioHolding[]>(defaultHoldings);
+
+  useEffect(() => {
+    // Load holdings from localStorage and merge with default data
+    const savedHoldings = localStorage.getItem('portfolioHoldings');
+    if (savedHoldings) {
+      try {
+        const parsedHoldings = JSON.parse(savedHoldings);
+        setHoldings(parsedHoldings);
+      } catch (error) {
+        console.error('Error parsing saved holdings:', error);
+        setHoldings(defaultHoldings);
+      }
+    }
+  }, []);
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-IN", {
       style: "currency",
@@ -122,7 +139,7 @@ export default function PortfolioPage() {
 
           {/* Holdings Tab */}
           <TabsContent value="holdings" className="space-y-4">
-            {portfolioHoldings.map((holding) => (
+            {holdings.map((holding) => (
               <Card key={holding.id}>
                 <CardContent className="pt-6">
                   <div className="grid lg:grid-cols-12 gap-4 items-center">
