@@ -134,7 +134,7 @@ export default function PortfolioPage() {
         <Tabs defaultValue="holdings" className="space-y-6">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="holdings">Holdings</TabsTrigger>
-            <TabsTrigger value="newbonds">New Bonds</TabsTrigger>
+            <TabsTrigger value="newbonds">Explore Bonds</TabsTrigger>
           </TabsList>
 
           {/* Holdings Tab */}
@@ -175,10 +175,10 @@ export default function PortfolioPage() {
                           Held Quantity
                         </div>
                         <div className="font-medium">
-                          {holding.heldQuantity || 0} units
+                          {holding.heldQuantity} units
                         </div>
                         <div className="text-sm text-gray-500">
-                          Invested: {formatCurrency(holding.investedAmount || 0)}
+                          Invested: {formatCurrency(holding.investedAmount)}
                         </div>
                       </div>
                     </div>
@@ -205,7 +205,7 @@ export default function PortfolioPage() {
                           Next Coupon
                         </div>
                         <div className="font-medium">
-                          {holding.nextCoupon ? formatDate(holding.nextCoupon) : 'N/A'}
+                          {formatDate(holding.nextCoupon)}
                         </div>
                       </div>
                     </div>

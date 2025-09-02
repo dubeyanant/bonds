@@ -56,7 +56,7 @@ export function BuySell({ bondData, transactionType, onBack, onOrderPlaced }: Bu
 
 
   // Calculate available units based on transaction type
-  const availableUnits = transactionType === 'buy' ? bondData.maxUnitsAvailable : (bondData.heldQuantity || 0);
+  const availableUnits = transactionType === 'buy' ? bondData.maxUnitsAvailable : (bondData.heldQuantity);
   const minUnits = 1;
   const maxUnits = availableUnits;
 
@@ -421,11 +421,19 @@ export function BuySell({ bondData, transactionType, onBack, onOrderPlaced }: Bu
                       return (
                         <div
                           key={months}
-                          className={`p-3 rounded-lg border transition-colors cursor-pointer ${selectedValuation === months
-                            ? 'border-blue-500 bg-blue-50'
-                            : 'border-gray-200 hover:bg-gray-50'
-                            }`}
-                          onClick={() => setSelectedValuation(months)}
+                          className={`p-3 rounded-lg border transition-colors ${
+                            isMaturity && transactionType === 'sell'
+                              ? 'cursor-not-allowed border-orange-300 bg-orange-100' 
+                              : `cursor-pointer ${selectedValuation === months
+                                  ? 'border-blue-500 bg-blue-50'
+                                  : 'border-gray-200 hover:bg-gray-50'
+                                }`
+                          }`}
+                          onClick={() => {
+                            if (!(isMaturity && transactionType === 'sell')) {
+                              setSelectedValuation(months);
+                            }
+                          }}
                         >
                           <div className="flex justify-between items-center">
                             <div>
