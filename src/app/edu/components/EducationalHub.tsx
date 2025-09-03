@@ -4,21 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  BookOpen, 
-  Play, 
-  CheckCircle, 
-  Lock, 
-  Star, 
-  Clock, 
-  Users, 
-  TrendingUp,
+import {
+  BookOpen,
+  Play,
+  CheckCircle,
+  Lock,
+  Star,
+  Clock,
+  Users,
   FileText,
   Video,
-  Headphones,
   Award,
-  Search,
-  Filter
 } from "lucide-react";
 
 interface LearningModule {
@@ -32,16 +28,6 @@ interface LearningModule {
   isLocked: boolean;
   topics: string[];
   type: "video" | "article" | "interactive" | "quiz";
-}
-
-interface CaseStudy {
-  id: string;
-  title: string;
-  description: string;
-  scenario: string;
-  difficulty: "Beginner" | "Intermediate" | "Advanced";
-  estimatedTime: string;
-  learningOutcomes: string[];
 }
 
 export function EducationalHub() {
@@ -123,36 +109,6 @@ export function EducationalHub() {
     }
   ];
 
-  const caseStudies: CaseStudy[] = [
-    {
-      id: "1",
-      title: "Interest Rate Risk Scenario",
-      description: "Analyze how rising interest rates affect a bond portfolio",
-      scenario: "RBI increases repo rate by 50 bps. How does this impact your bond holdings?",
-      difficulty: "Intermediate",
-      estimatedTime: "30 min",
-      learningOutcomes: ["Interest rate sensitivity", "Portfolio rebalancing", "Duration matching"]
-    },
-    {
-      id: "2", 
-      title: "Credit Rating Downgrade",
-      description: "Navigate a corporate bond facing credit rating changes",
-      scenario: "A corporate bond you own gets downgraded from AA to A+. What's your next move?",
-      difficulty: "Advanced",
-      estimatedTime: "25 min",
-      learningOutcomes: ["Credit analysis", "Risk assessment", "Portfolio decisions"]
-    },
-    {
-      id: "3",
-      title: "Building a Ladder Strategy",
-      description: "Construct a bond ladder for steady income",
-      scenario: "You have ₹10 lakhs to invest for regular income. Build an optimal bond ladder.",
-      difficulty: "Beginner",
-      estimatedTime: "35 min",
-      learningOutcomes: ["Laddering strategy", "Cash flow planning", "Reinvestment risk"]
-    }
-  ];
-
   const glossaryTerms = [
     { term: "Yield to Maturity (YTM)", definition: "The total return anticipated on a bond if held until maturity" },
     { term: "Coupon Rate", definition: "The annual interest rate paid by the bond issuer" },
@@ -173,7 +129,7 @@ export function EducationalHub() {
       title: "Corporate Bond Market Outlook 2024",
       speaker: "Sanjay Sharma, CFA",
       duration: "18:45",
-      views: "32K", 
+      views: "32K",
       rating: 4.6
     },
     {
@@ -206,11 +162,11 @@ export function EducationalHub() {
 
   const filteredModules = learningModules.filter(module => {
     const matchesSearch = module.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         module.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesFilter = activeFilter === "all" || 
-                         activeFilter === module.difficulty.toLowerCase() ||
-                         (activeFilter === "completed" && module.isCompleted) ||
-                         (activeFilter === "in-progress" && module.progress > 0 && !module.isCompleted);
+      module.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesFilter = activeFilter === "all" ||
+      activeFilter === module.difficulty.toLowerCase() ||
+      (activeFilter === "completed" && module.isCompleted) ||
+      (activeFilter === "in-progress" && module.progress > 0 && !module.isCompleted);
     return matchesSearch && matchesFilter;
   });
 
@@ -250,47 +206,14 @@ export function EducationalHub() {
         </Card>
 
         <Tabs defaultValue="modules" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="modules">Learning Modules</TabsTrigger>
             <TabsTrigger value="videos">Video Library</TabsTrigger>
-            <TabsTrigger value="cases">Case Studies</TabsTrigger>
             <TabsTrigger value="glossary">Glossary</TabsTrigger>
-            <TabsTrigger value="progress">My Progress</TabsTrigger>
           </TabsList>
 
           {/* Learning Modules Tab */}
           <TabsContent value="modules" className="space-y-6">
-            {/* Search and Filters */}
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <div className="flex-1 relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                    <input
-                      type="text"
-                      placeholder="Search modules..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div className="flex gap-2 flex-wrap">
-                    {["all", "beginner", "intermediate", "advanced", "completed", "in-progress"].map((filter) => (
-                      <Button
-                        key={filter}
-                        variant={activeFilter === filter ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setActiveFilter(filter)}
-                        className="capitalize"
-                      >
-                        {filter === "in-progress" ? "In Progress" : filter}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
             {/* Modules Grid */}
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredModules.map((module) => (
@@ -300,7 +223,7 @@ export function EducationalHub() {
                       <Lock className="h-5 w-5 text-gray-400" />
                     </div>
                   )}
-                  
+
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-2">
@@ -315,10 +238,10 @@ export function EducationalHub() {
                     </div>
                     <CardTitle className="text-lg">{module.title}</CardTitle>
                   </CardHeader>
-                  
+
                   <CardContent>
                     <p className="text-gray-600 text-sm mb-4">{module.description}</p>
-                    
+
                     <div className="space-y-3">
                       <div className="flex items-center justify-between text-sm">
                         <div className="flex items-center gap-1 text-gray-500">
@@ -329,9 +252,9 @@ export function EducationalHub() {
                           {module.progress}% complete
                         </div>
                       </div>
-                      
+
                       <Progress value={module.progress} className="h-2" />
-                      
+
                       <div className="flex flex-wrap gap-1">
                         {module.topics.slice(0, 3).map((topic, index) => (
                           <Badge key={index} variant="secondary" className="text-xs">
@@ -345,7 +268,7 @@ export function EducationalHub() {
                         )}
                       </div>
                     </div>
-                    
+
                     <div className="mt-4">
                       {module.isLocked ? (
                         <Button disabled className="w-full">
@@ -396,11 +319,11 @@ export function EducationalHub() {
                       {video.duration}
                     </div>
                   </div>
-                  
+
                   <CardContent className="pt-4">
                     <h3 className="font-medium mb-2">{video.title}</h3>
                     <p className="text-sm text-gray-600 mb-3">by {video.speaker}</p>
-                    
+
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4 text-sm text-gray-500">
                         <div className="flex items-center gap-1">
@@ -413,58 +336,6 @@ export function EducationalHub() {
                         </div>
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-
-          {/* Case Studies Tab */}
-          <TabsContent value="cases" className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              {caseStudies.map((caseStudy) => (
-                <Card key={caseStudy.id} className="hover:shadow-lg transition-shadow cursor-pointer">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="text-lg mb-2">{caseStudy.title}</CardTitle>
-                        <div className="flex items-center gap-2">
-                          <Badge className={getDifficultyColor(caseStudy.difficulty)}>
-                            {caseStudy.difficulty}
-                          </Badge>
-                          <div className="flex items-center gap-1 text-sm text-gray-500">
-                            <Clock className="h-4 w-4" />
-                            {caseStudy.estimatedTime}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  
-                  <CardContent>
-                    <p className="text-gray-600 text-sm mb-4">{caseStudy.description}</p>
-                    
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-                      <div className="font-medium text-blue-800 text-sm mb-1">Scenario:</div>
-                      <div className="text-blue-700 text-sm">{caseStudy.scenario}</div>
-                    </div>
-                    
-                    <div className="mb-4">
-                      <div className="font-medium text-sm mb-2">What you'll learn:</div>
-                      <ul className="space-y-1">
-                        {caseStudy.learningOutcomes.map((outcome, index) => (
-                          <li key={index} className="text-sm text-gray-600 flex items-start gap-2">
-                            <div className="h-1.5 w-1.5 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                            <span>{outcome}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    
-                    <Button className="w-full">
-                      <Play className="h-4 w-4 mr-2" />
-                      Start Case Study
-                    </Button>
                   </CardContent>
                 </Card>
               ))}
@@ -485,116 +356,6 @@ export function EducationalHub() {
                       <p className="text-sm text-gray-600">{item.definition}</p>
                     </div>
                   ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Progress Tab */}
-          <TabsContent value="progress" className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5 text-green-600" />
-                    Learning Progress
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div>
-                      <div className="flex justify-between mb-2">
-                        <span>Overall Completion</span>
-                        <span>68%</span>
-                      </div>
-                      <Progress value={68} className="h-3" />
-                    </div>
-                    
-                    <div className="space-y-3">
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Beginner Level</span>
-                        <Badge className="bg-green-100 text-green-800">Completed</Badge>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Intermediate Level</span>
-                        <Badge className="bg-yellow-100 text-yellow-800">In Progress</Badge>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm text-gray-600">Advanced Level</span>
-                        <Badge variant="secondary">Locked</Badge>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Award className="h-5 w-5 text-purple-600" />
-                    Achievements
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-                      <div className="bg-green-500 p-2 rounded-full">
-                        <CheckCircle className="h-4 w-4 text-white" />
-                      </div>
-                      <div>
-                        <div className="font-medium text-sm">Bond Basics Master</div>
-                        <div className="text-xs text-gray-500">Complete beginner modules</div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
-                      <div className="bg-blue-500 p-2 rounded-full">
-                        <Star className="h-4 w-4 text-white" />
-                      </div>
-                      <div>
-                        <div className="font-medium text-sm">Quiz Champion</div>
-                        <div className="text-xs text-gray-500">Score 90%+ on 5 quizzes</div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-lg">
-                      <div className="bg-purple-500 p-2 rounded-full">
-                        <Award className="h-4 w-4 text-white" />
-                      </div>
-                      <div>
-                        <div className="font-medium text-sm">Learning Streak</div>
-                        <div className="text-xs text-gray-500">7 days of continuous learning</div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Recommended Next Steps</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-3 gap-4">
-                  <Button variant="outline" className="h-auto p-4 justify-start">
-                    <div className="text-left">
-                      <div className="font-medium">Complete Yield Analysis</div>
-                      <div className="text-sm text-gray-500">Continue your intermediate journey</div>
-                    </div>
-                  </Button>
-                  <Button variant="outline" className="h-auto p-4 justify-start">
-                    <div className="text-left">
-                      <div className="font-medium">Take Assessment Quiz</div>
-                      <div className="text-sm text-gray-500">Test your knowledge</div>
-                    </div>
-                  </Button>
-                  <Button variant="outline" className="h-auto p-4 justify-start">
-                    <div className="text-left">
-                      <div className="font-medium">Explore Case Studies</div>
-                      <div className="text-sm text-gray-500">Apply your learning</div>
-                    </div>
-                  </Button>
                 </div>
               </CardContent>
             </Card>

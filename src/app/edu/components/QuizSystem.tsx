@@ -5,13 +5,13 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { 
-  Trophy, 
-  Star, 
-  Clock, 
-  CheckCircle, 
-  XCircle, 
-  Target, 
+import {
+  Trophy,
+  Star,
+  Clock,
+  CheckCircle,
+  XCircle,
+  Target,
   Brain,
   Award,
   TrendingUp,
@@ -47,7 +47,7 @@ interface Quiz {
 export function QuizSystem() {
   const [selectedQuiz, setSelectedQuiz] = useState<string | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedAnswers, setSelectedAnswers] = useState<{[key: string]: number}>({});
+  const [selectedAnswers, setSelectedAnswers] = useState<{ [key: string]: number }>({});
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [score, setScore] = useState(0);
@@ -74,7 +74,7 @@ export function QuizSystem() {
       questionCount: 15,
       estimatedTime: "25 min",
       topics: ["Present Value", "YTM", "Duration", "Convexity"],
-      badge: "Pricing Pro",
+      badge: "Quiz Master",
       points: 200,
       attempts: 2,
       bestScore: 85
@@ -87,7 +87,7 @@ export function QuizSystem() {
       questionCount: 12,
       estimatedTime: "20 min",
       topics: ["Credit Risk", "Rating Agencies", "Default Probability"],
-      badge: "Credit Analyst",
+      badge: "Knowledge Seeker",
       points: 150,
       attempts: 1,
       bestScore: 92
@@ -126,7 +126,7 @@ export function QuizSystem() {
       question: "What is the relationship between bond prices and interest rates?",
       options: [
         "Bond prices and interest rates move in the same direction",
-        "Bond prices and interest rates move in opposite directions", 
+        "Bond prices and interest rates move in opposite directions",
         "There is no relationship between bond prices and interest rates",
         "The relationship depends on the bond's credit rating"
       ],
@@ -243,7 +243,7 @@ export function QuizSystem() {
   if (selectedQuiz && !quizCompleted) {
     const currentQuestion = sampleQuestions[currentQuestionIndex];
     const quiz = quizzes.find(q => q.id === selectedQuiz);
-    
+
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -274,9 +274,9 @@ export function QuizSystem() {
               </div>
               <CardTitle className="text-xl">{currentQuestion.question}</CardTitle>
             </CardHeader>
-            
+
             <CardContent>
-              <RadioGroup 
+              <RadioGroup
                 value={selectedAnswers[currentQuestion.id]?.toString() || ""}
                 onValueChange={(value) => handleAnswerSelect(currentQuestion.id, parseInt(value))}
               >
@@ -289,16 +289,16 @@ export function QuizSystem() {
                   </div>
                 ))}
               </RadioGroup>
-              
+
               <div className="flex justify-between mt-8">
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1))}
                   disabled={currentQuestionIndex === 0}
                 >
                   Previous
                 </Button>
-                <Button 
+                <Button
                   onClick={nextQuestion}
                   disabled={selectedAnswers[currentQuestion.id] === undefined}
                 >
@@ -315,7 +315,7 @@ export function QuizSystem() {
   if (showResults) {
     const quiz = quizzes.find(q => q.id === selectedQuiz);
     const correctAnswers = sampleQuestions.filter(q => selectedAnswers[q.id] === q.correctAnswer).length;
-    
+
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -331,19 +331,19 @@ export function QuizSystem() {
                   <Target className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                 )}
               </div>
-              
+
               <h1 className="text-3xl font-bold mb-2">Quiz Completed!</h1>
               <div className="text-6xl font-bold text-blue-600 mb-2">{score}%</div>
               <p className="text-gray-600 mb-4">
                 You got {correctAnswers} out of {sampleQuestions.length} questions correct
               </p>
-              
+
               {score >= 80 && (
                 <Badge className="bg-yellow-100 text-yellow-800 mb-4">
                   🏆 Excellent Performance!
                 </Badge>
               )}
-              
+
               <div className="flex justify-center gap-4">
                 <Button onClick={restartQuiz}>
                   Try Another Quiz
@@ -366,7 +366,7 @@ export function QuizSystem() {
                 {sampleQuestions.map((question, index) => {
                   const userAnswer = selectedAnswers[question.id];
                   const isCorrect = userAnswer === question.correctAnswer;
-                  
+
                   return (
                     <div key={question.id} className="border rounded-lg p-4">
                       <div className="flex items-start justify-between mb-2">
@@ -382,20 +382,19 @@ export function QuizSystem() {
                           {question.difficulty}
                         </Badge>
                       </div>
-                      
+
                       <p className="mb-3">{question.question}</p>
-                      
+
                       <div className="space-y-2 mb-3">
                         {question.options.map((option, optionIndex) => (
-                          <div 
+                          <div
                             key={optionIndex}
-                            className={`p-2 rounded text-sm ${
-                              optionIndex === question.correctAnswer
+                            className={`p-2 rounded text-sm ${optionIndex === question.correctAnswer
                                 ? 'bg-green-100 border border-green-300'
                                 : optionIndex === userAnswer && !isCorrect
-                                ? 'bg-red-100 border border-red-300'
-                                : 'bg-gray-50'
-                            }`}
+                                  ? 'bg-red-100 border border-red-300'
+                                  : 'bg-gray-50'
+                              }`}
                           >
                             {option}
                             {optionIndex === question.correctAnswer && (
@@ -407,7 +406,7 @@ export function QuizSystem() {
                           </div>
                         ))}
                       </div>
-                      
+
                       <div className="bg-blue-50 border border-blue-200 rounded p-3">
                         <div className="font-medium text-blue-800 text-sm mb-1">Explanation:</div>
                         <div className="text-blue-700 text-sm">{question.explanation}</div>
@@ -490,7 +489,7 @@ export function QuizSystem() {
                             )}
                           </div>
                           <p className="text-sm text-gray-600 mb-3">{quiz.description}</p>
-                          
+
                           <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-3">
                             <div className="flex items-center gap-1">
                               <Target className="h-4 w-4" />
@@ -505,7 +504,7 @@ export function QuizSystem() {
                               {quiz.points} points
                             </div>
                           </div>
-                          
+
                           <div className="flex flex-wrap gap-1 mb-3">
                             {quiz.topics.map((topic, index) => (
                               <Badge key={index} variant="secondary" className="text-xs">
@@ -513,7 +512,7 @@ export function QuizSystem() {
                               </Badge>
                             ))}
                           </div>
-                          
+
                           {quiz.bestScore && (
                             <div className="text-sm text-green-600">
                               Best Score: {quiz.bestScore}% ({quiz.attempts} attempts)
@@ -521,8 +520,8 @@ export function QuizSystem() {
                           )}
                         </div>
                       </div>
-                      
-                      <Button 
+
+                      <Button
                         onClick={() => startQuiz(quiz.id)}
                         className="w-full sm:w-auto"
                       >
@@ -538,25 +537,6 @@ export function QuizSystem() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Current Streak */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-orange-600" />
-                  Learning Streak
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-orange-600 mb-1">{userStats.currentStreak}</div>
-                  <div className="text-sm text-gray-600 mb-3">Days in a row</div>
-                  <div className="text-xs text-gray-500">
-                    Best streak: {userStats.bestStreak} days
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
             {/* Badges */}
             <Card>
               <CardHeader>
@@ -599,12 +579,11 @@ export function QuizSystem() {
                 <div className="space-y-3">
                   {leaderboard.slice(0, 5).map((user, index) => (
                     <div key={index} className={`flex items-center gap-3 p-2 rounded-lg ${user.name === 'You' ? 'bg-blue-50 border border-blue-200' : ''}`}>
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                        index === 0 ? 'bg-yellow-400 text-white' :
-                        index === 1 ? 'bg-gray-300 text-gray-700' :
-                        index === 2 ? 'bg-orange-400 text-white' :
-                        'bg-gray-100 text-gray-600'
-                      }`}>
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${index === 0 ? 'bg-yellow-400 text-white' :
+                          index === 1 ? 'bg-gray-300 text-gray-700' :
+                            index === 2 ? 'bg-orange-400 text-white' :
+                              'bg-gray-100 text-gray-600'
+                        }`}>
                         {index + 1}
                       </div>
                       <div className="flex-1">
