@@ -253,7 +253,7 @@ export function QuizSystem() {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h1 className="text-2xl font-bold">{quiz?.title}</h1>
-                  <p className="text-gray-600">Question {currentQuestionIndex + 1} of {sampleQuestions.length}</p>
+                  <p className="text-gray-600">Question {currentQuestionIndex + 1} of {sampleQuestions.length + 7}</p>
                 </div>
                 <Button variant="outline" onClick={restartQuiz}>
                   Exit Quiz
