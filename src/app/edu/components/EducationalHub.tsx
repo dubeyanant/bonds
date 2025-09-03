@@ -114,8 +114,8 @@ export function EducationalHub() {
     },
     {
       id: "5",
-      title: "Advance Bonds Concepts",
-      description: "Advanced concepts of price sensitivity and risk measurement",
+      title: "Types of Bonds",
+      description: "Advanced concepts of bonds sensitivity and risk measurement",
       duration: "70 min",
       difficulty: "Advanced",
       ...getModuleState("5", 0, false),
