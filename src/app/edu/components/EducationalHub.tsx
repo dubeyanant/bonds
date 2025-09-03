@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +15,9 @@ import {
   FileText,
   Video,
   Award,
+  ArrowLeft,
 } from "lucide-react";
+import { BondLearningFlow } from "./BondLearningFlow";
 
 interface LearningModule {
   id: string;
@@ -33,6 +35,37 @@ interface LearningModule {
 export function EducationalHub() {
   const [activeFilter, setActiveFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [showLearningFlow, setShowLearningFlow] = useState(false);
+  const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
+  const [moduleProgress, setModuleProgress] = useState<{ [key: string]: { progress: number; isCompleted: boolean } }>({});
+
+  // Load progress from localStorage on component mount
+  useEffect(() => {
+    const savedProgress = localStorage.getItem('bondEducationProgress');
+    if (savedProgress) {
+      setModuleProgress(JSON.parse(savedProgress));
+    }
+  }, []);
+
+  // Save progress to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('bondEducationProgress', JSON.stringify(moduleProgress));
+  }, [moduleProgress]);
+
+  const getModuleState = (moduleId: string, defaultProgress: number, defaultCompleted: boolean) => {
+    const saved = moduleProgress[moduleId];
+    return {
+      progress: saved?.progress ?? defaultProgress,
+      isCompleted: saved?.isCompleted ?? defaultCompleted
+    };
+  };
+
+  const updateModuleProgress = (moduleId: string, progress: number, isCompleted: boolean) => {
+    setModuleProgress(prev => ({
+      ...prev,
+      [moduleId]: { progress, isCompleted }
+    }));
+  };
 
   const learningModules: LearningModule[] = [
     {
@@ -41,8 +74,7 @@ export function EducationalHub() {
       description: "Learn the fundamentals of bond investing, what bonds are, and how they work",
       duration: "45 min",
       difficulty: "Beginner",
-      progress: 100,
-      isCompleted: true,
+      ...getModuleState("1", 0, false),
       isLocked: false,
       topics: ["Bond Basics", "Types of Bonds", "Bond vs Stocks"],
       type: "video"
@@ -53,8 +85,7 @@ export function EducationalHub() {
       description: "Deep dive into how bonds are priced and what affects bond valuations",
       duration: "60 min",
       difficulty: "Intermediate",
-      progress: 75,
-      isCompleted: false,
+      ...getModuleState("2", 100, true),
       isLocked: false,
       topics: ["Present Value", "Interest Rates", "Credit Risk"],
       type: "interactive"
@@ -65,8 +96,7 @@ export function EducationalHub() {
       description: "Master different types of yields and how to calculate them",
       duration: "50 min",
       difficulty: "Intermediate",
-      progress: 30,
-      isCompleted: false,
+      ...getModuleState("3", 45, false),
       isLocked: false,
       topics: ["Current Yield", "YTM", "YTC", "Spread Analysis"],
       type: "article"
@@ -77,8 +107,7 @@ export function EducationalHub() {
       description: "Understanding credit ratings, rating agencies, and what they mean for investors",
       duration: "40 min",
       difficulty: "Beginner",
-      progress: 0,
-      isCompleted: false,
+      ...getModuleState("4", 100, true),
       isLocked: false,
       topics: ["Rating Agencies", "Rating Scale", "Default Risk"],
       type: "video"
@@ -89,8 +118,7 @@ export function EducationalHub() {
       description: "Advanced concepts of price sensitivity and risk measurement",
       duration: "70 min",
       difficulty: "Advanced",
-      progress: 0,
-      isCompleted: false,
+      ...getModuleState("5", 0, false),
       isLocked: true,
       topics: ["Modified Duration", "Convexity", "Hedging"],
       type: "interactive"
@@ -101,8 +129,7 @@ export function EducationalHub() {
       description: "Navigate the tax landscape for bond investments in India",
       duration: "35 min",
       difficulty: "Intermediate",
-      progress: 0,
-      isCompleted: false,
+      ...getModuleState("6", 0, false),
       isLocked: false,
       topics: ["Tax Treatment", "TDS", "Capital Gains"],
       type: "article"
@@ -160,6 +187,35 @@ export function EducationalHub() {
     }
   };
 
+  const handleModuleClick = (moduleId: string) => {
+    if (moduleId === "1") { // Introduction to Bonds module
+      setSelectedModuleId(moduleId);
+      setShowLearningFlow(true);
+    }
+    // Handle other modules as needed
+  };
+
+  const handleLearningFlowBack = () => {
+    setShowLearningFlow(false);
+    setSelectedModuleId(null);
+  };
+
+  const handleLearningFlowComplete = () => {
+    // Update the module progress to completed
+    if (selectedModuleId) {
+      updateModuleProgress(selectedModuleId, 100, true);
+    }
+    setShowLearningFlow(false);
+    setSelectedModuleId(null);
+  };
+
+  const handleLearningFlowProgress = (progress: number) => {
+    // Update the module progress when user leaves mid-way
+    if (selectedModuleId) {
+      updateModuleProgress(selectedModuleId, progress, false);
+    }
+  };
+
   const filteredModules = learningModules.filter(module => {
     const matchesSearch = module.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       module.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -169,6 +225,30 @@ export function EducationalHub() {
       (activeFilter === "in-progress" && module.progress > 0 && !module.isCompleted);
     return matchesSearch && matchesFilter;
   });
+
+  if (showLearningFlow && selectedModuleId === "1") {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 py-8">
+          <div className="mb-6">
+            <Button 
+              variant="ghost" 
+              onClick={handleLearningFlowBack}
+              className="mb-4"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Educational Hub
+            </Button>
+          </div>
+          <BondLearningFlow 
+            onBack={handleLearningFlowBack}
+            onComplete={handleLearningFlowComplete}
+            onProgress={handleLearningFlowProgress}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -186,19 +266,27 @@ export function EducationalHub() {
           <CardContent className="pt-6">
             <div className="grid md:grid-cols-4 gap-6">
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600 mb-1">4</div>
+                <div className="text-2xl font-bold text-blue-600 mb-1">
+                  {learningModules.filter(m => m.isCompleted).length}
+                </div>
                 <div className="text-sm text-gray-600">Modules Completed</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-600 mb-1">68%</div>
+                <div className="text-2xl font-bold text-green-600 mb-1">
+                  {Math.round(learningModules.reduce((acc, m) => acc + m.progress, 0) / learningModules.length)}%
+                </div>
                 <div className="text-sm text-gray-600">Overall Progress</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-purple-600 mb-1">3</div>
+                <div className="text-2xl font-bold text-purple-600 mb-1">
+                  {learningModules.filter(m => m.isCompleted).length}
+                </div>
                 <div className="text-sm text-gray-600">Certificates Earned</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-orange-600 mb-1">12h</div>
+                <div className="text-2xl font-bold text-orange-600 mb-1">
+                  {learningModules.filter(m => m.progress > 0).length * 2}h
+                </div>
                 <div className="text-sm text-gray-600">Learning Time</div>
               </div>
             </div>
@@ -276,17 +364,27 @@ export function EducationalHub() {
                           Locked
                         </Button>
                       ) : module.isCompleted ? (
-                        <Button variant="outline" className="w-full">
+                        <Button 
+                          variant="outline" 
+                          className="w-full"
+                          onClick={() => handleModuleClick(module.id)}
+                        >
                           <CheckCircle className="h-4 w-4 mr-2" />
                           Review
                         </Button>
                       ) : module.progress > 0 ? (
-                        <Button className="w-full">
+                        <Button 
+                          className="w-full"
+                          onClick={() => handleModuleClick(module.id)}
+                        >
                           <Play className="h-4 w-4 mr-2" />
                           Continue
                         </Button>
                       ) : (
-                        <Button className="w-full">
+                        <Button 
+                          className="w-full"
+                          onClick={() => handleModuleClick(module.id)}
+                        >
                           <Play className="h-4 w-4 mr-2" />
                           Start Learning
                         </Button>
