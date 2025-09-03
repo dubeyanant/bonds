@@ -4,6 +4,7 @@ import { useState } from "react";
 import { EducationalHub } from "./components/EducationalHub";
 import { BondSearch } from "./components/BondSearch";
 import { QuizSystem } from "./components/QuizSystem";
+import { PortfolioSuggestion } from "./components/PortfolioSuggestion";
 import { Navigation } from "./components/Navigation";
 
 export default function EduPage() {
@@ -18,7 +19,7 @@ export default function EduPage() {
       case "quiz":
         return <QuizSystem />;
       case "suggestions":
-        return <QuizSystem />;
+        return <PortfolioSuggestion />;
     }
   };
 

@@ -106,7 +106,6 @@ export function Navigation({ activeView, onViewChange }: NavigationProps) {
                   <Star className="h-3 w-3 text-yellow-500" />
                   {userStats.points}
                 </span>
-                <span>{userStats.streak}🔥</span>
               </div>
             </div>
             <Button variant="ghost" size="sm" className="h-8 w-8 rounded-full bg-blue-100">
