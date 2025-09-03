@@ -114,7 +114,7 @@ export function EducationalHub() {
     },
     {
       id: "5",
-      title: "Duration & Convexity",
+      title: "Advance Bonds Concepts",
       description: "Advanced concepts of price sensitivity and risk measurement",
       duration: "70 min",
       difficulty: "Advanced",

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Star, Building, Calendar, TrendingUp, Shield, ArrowUpDown, Clock, Award, Target, Landmark } from "lucide-react";
+import { EnhancedBondDetail } from "./EnhancedBondDetail";
 
 interface Bond {
   id: string;
@@ -25,6 +26,8 @@ interface Bond {
 
 export function BondSearch() {
   const [activeTab, setActiveTab] = useState("short-tenure");
+  const [selectedBond, setSelectedBond] = useState<Bond | null>(null);
+  const [showBondDetail, setShowBondDetail] = useState(false);
 
   const sampleBonds: Bond[] = [
     {
@@ -53,9 +56,9 @@ export function BondSearch() {
       ratingAgency: "CRISIL",
       currentYield: 8.45,
       faceValue: 1000,
-      currentPrice: 980,
-      maturityDate: "2029-03-20",
-      tenure: "5 years",
+      currentPrice: 985.50,
+      maturityDate: "2027-03-20",
+      tenure: "3 years",
       couponRate: 8.25,
       minInvestment: 25000,
       isWatchlisted: true,
@@ -171,6 +174,18 @@ export function BondSearch() {
     }
   };
 
+  const handleBondClick = (bond: Bond) => {
+    if (bond.id === "2") { // HDFC Bank Bond Series XV
+      setSelectedBond(bond);
+      setShowBondDetail(true);
+    }
+  };
+
+  const handleBackFromDetail = () => {
+    setShowBondDetail(false);
+    setSelectedBond(null);
+  };
+
   const renderBondCard = (bond: Bond) => (
     <Card key={bond.id} className="hover:shadow-md transition-shadow cursor-pointer">
       <CardContent className="p-6">
@@ -261,13 +276,26 @@ export function BondSearch() {
 
         {/* Action Buttons */}
         <div className="flex justify-end mt-4 pt-4 border-t">
-          <Button size="sm">
-            View Details
+          <Button 
+            size="sm"
+            onClick={() => handleBondClick(bond)}
+            disabled={bond.id !== "2"}
+          >
+            {bond.id === "2" ? "View Details" : "Coming Soon"}
           </Button>
         </div>
       </CardContent>
     </Card>
   );
+
+  if (showBondDetail && selectedBond) {
+    return (
+      <EnhancedBondDetail 
+        onBack={handleBackFromDetail}
+        onBuyAction={() => console.log('Buy action for', selectedBond.name)}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -332,7 +360,7 @@ export function BondSearch() {
                   <div>
                     <h3 className="text-xl font-semibold mb-2 text-blue-900">Short Tenure Bonds</h3>
                     <p className="text-blue-700 mb-1">Bonds with maturity period of 3 years or less</p>
-                    <span className="text-blue-600 text-sm font-medium">{getFilteredBonds('short-tenure').length} bonds found</span>
+                    <span className="text-blue-600 text-sm font-medium">{getFilteredBonds('short-tenure').length + 8} bonds found</span>
                   </div>
                 </div>
                 <Button variant="outline" size="sm" className="flex items-center gap-2 bg-white hover:bg-blue-50 border-blue-200">
