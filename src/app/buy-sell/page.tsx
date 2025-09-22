@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { BuySell } from "@/components/buySell";
 import { Bond } from "@/lib/mockData";
@@ -16,7 +16,20 @@ import {
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
 
-export default function BuySellPage() {
+// Loading component for Suspense fallback
+function LoadingSpinner() {
+  return (
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading bond details...</p>
+      </div>
+    </div>
+  );
+}
+
+// Main component that uses useSearchParams
+function BuySellContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [bondData, setBondData] = useState<Bond | null>(null);
@@ -106,14 +119,7 @@ export default function BuySellPage() {
   }, [bondData]);
 
   if (!bondData) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading bond details...</p>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   return (
@@ -153,5 +159,14 @@ export default function BuySellPage() {
         </DialogContent>
       </Dialog>
     </>
+  );
+}
+
+// Main export component with Suspense wrapper
+export default function BuySellPage() {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <BuySellContent />
+    </Suspense>
   );
 }
