@@ -45,6 +45,27 @@ export function BondLearningFlow({ onBack, onComplete, onProgress }: LearningFlo
   const [completedLessons, setCompletedLessons] = useState<Set<number>>(new Set());
   const [quizAnswers, setQuizAnswers] = useState<{ [key: string]: string }>({});
 
+  // Load saved state from localStorage on component mount
+  React.useEffect(() => {
+    const savedState = localStorage.getItem('bondLearningFlow_module1');
+    if (savedState) {
+      const { currentIndex, completed, answers } = JSON.parse(savedState);
+      setCurrentLessonIndex(currentIndex || 0);
+      setCompletedLessons(new Set(completed || []));
+      setQuizAnswers(answers || {});
+    }
+  }, []);
+
+  // Save state to localStorage whenever it changes
+  React.useEffect(() => {
+    const stateToSave = {
+      currentIndex: currentLessonIndex,
+      completed: Array.from(completedLessons),
+      answers: quizAnswers
+    };
+    localStorage.setItem('bondLearningFlow_module1', JSON.stringify(stateToSave));
+  }, [currentLessonIndex, completedLessons, quizAnswers]);
+
   const lessons: Lesson[] = [
     {
       id: 1,
@@ -539,12 +560,15 @@ export function BondLearningFlow({ onBack, onComplete, onProgress }: LearningFlo
   ];
 
   const currentLesson = lessons[currentLessonIndex];
-  const progressPercentage = ((completedLessons.size) / lessons.length) * 100;
+  // Calculate progress based on current lesson index (more accurate for resume functionality)
+  const progressPercentage = ((currentLessonIndex + 1) / lessons.length) * 100;
 
   const nextLesson = () => {
     if (currentLessonIndex < lessons.length - 1) {
       setCurrentLessonIndex(currentLessonIndex + 1);
       updateProgress();
+      // Scroll to top when navigating to next lesson
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -552,6 +576,8 @@ export function BondLearningFlow({ onBack, onComplete, onProgress }: LearningFlo
     if (currentLessonIndex > 0) {
       setCurrentLessonIndex(currentLessonIndex - 1);
       updateProgress();
+      // Scroll to top when navigating to previous lesson
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -594,7 +620,10 @@ export function BondLearningFlow({ onBack, onComplete, onProgress }: LearningFlo
           <CardContent className="pt-4">
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm font-medium">Course Progress</span>
-              <span className="text-sm text-gray-600">{completedLessons.size} of {lessons.length} lessons completed</span>
+              <div className="text-right">
+                <span className="text-sm text-gray-600">Lesson {currentLessonIndex + 1} of {lessons.length}</span>
+                <span className="text-sm font-medium text-blue-600 ml-2">({Math.round(progressPercentage)}%)</span>
+              </div>
             </div>
             <Progress value={progressPercentage} className="h-2" />
           </CardContent>
@@ -605,7 +634,11 @@ export function BondLearningFlow({ onBack, onComplete, onProgress }: LearningFlo
           {lessons.map((lesson, index) => (
             <button
               key={lesson.id}
-              onClick={() => setCurrentLessonIndex(index)}
+              onClick={() => {
+                setCurrentLessonIndex(index);
+                // Scroll to top when clicking lesson navigation
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
               disabled={index > currentLessonIndex && !completedLessons.has(lesson.id)}
               className={`p-2 rounded-lg text-sm transition-colors ${index === currentLessonIndex
                   ? 'bg-blue-600 text-white'

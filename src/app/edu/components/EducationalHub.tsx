@@ -81,28 +81,6 @@ export function EducationalHub() {
     },
     {
       id: "2",
-      title: "Understanding Bond Pricing",
-      description: "Deep dive into how bonds are priced and what affects bond valuations",
-      duration: "60 min",
-      difficulty: "Intermediate",
-      ...getModuleState("2", 100, true),
-      isLocked: false,
-      topics: ["Present Value", "Interest Rates", "Credit Risk"],
-      type: "interactive"
-    },
-    {
-      id: "3",
-      title: "Yield Calculations & Analysis",
-      description: "Master different types of yields and how to calculate them",
-      duration: "50 min",
-      difficulty: "Intermediate",
-      ...getModuleState("3", 45, false),
-      isLocked: false,
-      topics: ["Current Yield", "YTM", "YTC", "Spread Analysis"],
-      type: "article"
-    },
-    {
-      id: "4",
       title: "Credit Ratings Explained",
       description: "Understanding credit ratings, rating agencies, and what they mean for investors",
       duration: "40 min",
@@ -113,18 +91,30 @@ export function EducationalHub() {
       type: "video"
     },
     {
-      id: "5",
-      title: "Types of Bonds",
-      description: "Advanced concepts of bonds sensitivity and risk measurement",
-      duration: "70 min",
-      difficulty: "Advanced",
-      ...getModuleState("5", 0, false),
-      isLocked: true,
-      topics: ["Modified Duration", "Convexity", "Hedging"],
+      id: "3",
+      title: "Understanding Bond Pricing",
+      description: "Deep dive into how bonds are priced and what affects bond valuations",
+      duration: "60 min",
+      difficulty: "Intermediate",
+      ...getModuleState("2", 100, true),
+      isLocked: false,
+      topics: ["Present Value", "Interest Rates", "Credit Risk"],
       type: "interactive"
     },
     {
-      id: "6",
+      id: "4",
+      title: "Yield Calculations & Analysis",
+      description: "Master different types of yields and how to calculate them",
+      duration: "50 min",
+      difficulty: "Intermediate",
+      ...getModuleState("3", 45, false),
+      isLocked: false,
+      topics: ["Current Yield", "YTM", "YTC", "Spread Analysis"],
+      type: "article"
+    },
+    
+    {
+      id: "5",
       title: "Tax Implications of Bond Investing",
       description: "Navigate the tax landscape for bond investments in India",
       duration: "35 min",
@@ -133,6 +123,17 @@ export function EducationalHub() {
       isLocked: false,
       topics: ["Tax Treatment", "TDS", "Capital Gains"],
       type: "article"
+    },
+    {
+      id: "6",
+      title: "Duration & Risk Management",
+      description: "Advanced concepts of bond sensitivity and risk measurement",
+      duration: "70 min",
+      difficulty: "Advanced",
+      ...getModuleState("5", 0, false),
+      isLocked: true,
+      topics: ["Modified Duration", "Convexity", "Hedging"],
+      type: "interactive"
     }
   ];
 
@@ -170,10 +171,10 @@ export function EducationalHub() {
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case "Beginner": return "bg-green-100 text-green-800";
-      case "Intermediate": return "bg-yellow-100 text-yellow-800";
-      case "Advanced": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "Beginner": return "bg-green-100 text-green-800 hover:bg-green-200 hover:text-green-900 transition-colors duration-200";
+      case "Intermediate": return "bg-yellow-100 text-yellow-800 hover:bg-yellow-200 hover:text-yellow-900 transition-colors duration-200";
+      case "Advanced": return "bg-red-100 text-red-800 hover:bg-red-200 hover:text-red-900 transition-colors duration-200";
+      default: return "bg-gray-100 text-gray-800 hover:bg-gray-200 hover:text-gray-900 transition-colors duration-200";
     }
   };
 
@@ -230,16 +231,6 @@ export function EducationalHub() {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-8">
-          <div className="mb-6">
-            <Button 
-              variant="ghost" 
-              onClick={handleLearningFlowBack}
-              className="mb-4"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Educational Hub
-            </Button>
-          </div>
           <BondLearningFlow 
             onBack={handleLearningFlowBack}
             onComplete={handleLearningFlowComplete}
