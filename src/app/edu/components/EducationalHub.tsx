@@ -9,15 +9,24 @@ import {
   Play,
   CheckCircle,
   Lock,
-  Star,
   Clock,
   Users,
   FileText,
   Video,
   Award,
-  ArrowLeft,
+  RefreshCw,
+  Plus,
 } from "lucide-react";
 import { BondLearningFlow } from "./BondLearningFlow";
+import { VideoPlayer, VideoThumbnail } from "@/components/VideoPlayer";
+import {
+  fetchMultipleYouTubeVideos,
+  processVideoData,
+  ProcessedVideoData,
+  EDUCATIONAL_VIDEO_IDS,
+  extractVideoIdFromUrl,
+  fetchYouTubeVideoDetails,
+} from "@/lib/youtubeApi";
 
 interface LearningModule {
   id: string;
@@ -38,6 +47,13 @@ export function EducationalHub() {
   const [showLearningFlow, setShowLearningFlow] = useState(false);
   const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
   const [moduleProgress, setModuleProgress] = useState<{ [key: string]: { progress: number; isCompleted: boolean } }>({});
+  
+  // YouTube video related states
+  const [videoLibrary, setVideoLibrary] = useState<ProcessedVideoData[]>([]);
+  const [isLoadingVideos, setIsLoadingVideos] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState<{ id: string; title: string } | null>(null);
+  const [newVideoUrl, setNewVideoUrl] = useState("");
+  const [isAddingVideo, setIsAddingVideo] = useState(false);
 
   // Load progress from localStorage on component mount
   useEffect(() => {
@@ -51,6 +67,93 @@ export function EducationalHub() {
   useEffect(() => {
     localStorage.setItem('bondEducationProgress', JSON.stringify(moduleProgress));
   }, [moduleProgress]);
+
+  // Load YouTube videos on component mount
+  useEffect(() => {
+    loadYouTubeVideos();
+  }, []);
+
+  // Load videos from localStorage or fetch from API
+  const loadYouTubeVideos = async () => {
+    setIsLoadingVideos(true);
+    try {
+      // First try to load from localStorage
+      const savedVideos = localStorage.getItem('bondEducationVideos');
+      if (savedVideos) {
+        setVideoLibrary(JSON.parse(savedVideos));
+      } else {
+        // Fetch from YouTube API
+        const videoData = await fetchMultipleYouTubeVideos(EDUCATIONAL_VIDEO_IDS);
+        const processedVideos = videoData.map(processVideoData);
+        setVideoLibrary(processedVideos);
+        localStorage.setItem('bondEducationVideos', JSON.stringify(processedVideos));
+      }
+    } catch (error) {
+      console.error('Error loading videos:', error);
+      // Fallback to static data if API fails
+      const fallbackVideos = [
+        {
+          id: 'fallback-1',
+          title: 'Introduction to Bond Investing',
+          speaker: 'Financial Education',
+          duration: '15:30',
+          views: '25K',
+          thumbnail: '/api/placeholder/320/180',
+          description: 'Learn the basics of bond investing',
+          publishedAt: new Date().toISOString(),
+          tags: ['bonds', 'investing'],
+          embedUrl: '#'
+        }
+      ];
+      setVideoLibrary(fallbackVideos);
+    }
+    setIsLoadingVideos(false);
+  };
+
+  // Add new video from URL
+  const addVideoFromUrl = async () => {
+    if (!newVideoUrl.trim()) return;
+    
+    const videoId = extractVideoIdFromUrl(newVideoUrl);
+    if (!videoId) {
+      alert('Please enter a valid YouTube URL');
+      return;
+    }
+
+    setIsAddingVideo(true);
+    try {
+      const videoData = await fetchYouTubeVideoDetails(videoId);
+      if (videoData) {
+        const processedVideo = processVideoData(videoData);
+        const updatedLibrary = [...videoLibrary, processedVideo];
+        setVideoLibrary(updatedLibrary);
+        localStorage.setItem('bondEducationVideos', JSON.stringify(updatedLibrary));
+        setNewVideoUrl('');
+      } else {
+        alert('Could not fetch video details. Please check the URL.');
+      }
+    } catch (error) {
+      console.error('Error adding video:', error);
+      alert('Error adding video. Please try again.');
+    }
+    setIsAddingVideo(false);
+  };
+
+  // Refresh video library
+  const refreshVideoLibrary = async () => {
+    localStorage.removeItem('bondEducationVideos');
+    await loadYouTubeVideos();
+  };
+
+  // Handle video play
+  const handleVideoPlay = (video: ProcessedVideoData) => {
+    setSelectedVideo({ id: video.id, title: video.title });
+  };
+
+  // Close video player
+  const closeVideoPlayer = () => {
+    setSelectedVideo(null);
+  };
 
   const getModuleState = (moduleId: string, defaultProgress: number, defaultCompleted: boolean) => {
     const saved = moduleProgress[moduleId];
@@ -145,29 +248,7 @@ export function EducationalHub() {
     { term: "Face Value", definition: "The principal amount that will be paid back at maturity" }
   ];
 
-  const videoLibrary = [
-    {
-      title: "RBI Monetary Policy Explained",
-      speaker: "Dr. Raghuram Rajan",
-      duration: "25:30",
-      views: "45K",
-      rating: 4.8
-    },
-    {
-      title: "Corporate Bond Market Outlook 2024",
-      speaker: "Sanjay Sharma, CFA",
-      duration: "18:45",
-      views: "32K",
-      rating: 4.6
-    },
-    {
-      title: "Government Securities: Safe Haven Assets",
-      speaker: "Priya Nair, Fixed Income Analyst",
-      duration: "22:15",
-      views: "28K",
-      rating: 4.7
-    }
-  ];
+  // Video library is now managed by state and loaded from YouTube API
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -389,46 +470,95 @@ export function EducationalHub() {
 
           {/* Video Library Tab */}
           <TabsContent value="videos" className="space-y-6">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {videoLibrary.map((video, index) => (
-                <Card key={index} className="hover:shadow-lg transition-shadow cursor-pointer">
-                  <div className="relative">
-                    <div className="w-full h-48 bg-gradient-to-br from-blue-400 to-purple-600 rounded-t-lg flex items-center justify-center">
-                      <div className="text-white text-center">
-                        <Video className="h-12 w-12 mx-auto mb-2" />
-                        <p className="text-sm">Video Content</p>
-                      </div>
-                    </div>
-                    <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-t-lg">
-                      <Button size="lg" className="rounded-full">
-                        <Play className="h-6 w-6" />
-                      </Button>
-                    </div>
-                    <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
-                      {video.duration}
-                    </div>
-                  </div>
+            {/* Video Library Header with Controls */}
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-semibold">Educational Videos</h2>
+                <p className="text-sm text-gray-600">Learn from expert insights and educational content</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={refreshVideoLibrary}
+                  disabled={isLoadingVideos}
+                >
+                  <RefreshCw className={`h-4 w-4 mr-2 ${isLoadingVideos ? 'animate-spin' : ''}`} />
+                  Refresh
+                </Button>
+              </div>
+            </div>
 
-                  <CardContent className="pt-4">
-                    <h3 className="font-medium mb-2">{video.title}</h3>
-                    <p className="text-sm text-gray-600 mb-3">by {video.speaker}</p>
+            {/* Add New Video Section */}
+            <Card className="p-4">
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  placeholder="Paste YouTube URL to add a new educational video..."
+                  value={newVideoUrl}
+                  onChange={(e) => setNewVideoUrl(e.target.value)}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  onKeyPress={(e) => e.key === 'Enter' && addVideoFromUrl()}
+                />
+                <Button
+                  onClick={addVideoFromUrl}
+                  disabled={isAddingVideo || !newVideoUrl.trim()}
+                  size="sm"
+                >
+                  {isAddingVideo ? (
+                    <RefreshCw className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Plus className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+            </Card>
 
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4 text-sm text-gray-500">
+            {/* Video Grid */}
+            {isLoadingVideos ? (
+              <div className="flex items-center justify-center py-12">
+                <RefreshCw className="h-8 w-8 animate-spin text-blue-600" />
+                <span className="ml-2 text-gray-600">Loading videos...</span>
+              </div>
+            ) : (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {videoLibrary.map((video) => (
+                  <Card key={video.id} className="overflow-hidden">
+                    <VideoThumbnail
+                      videoId={video.id}
+                      title={video.title}
+                      speaker={video.speaker}
+                      duration={video.duration}
+                      views={video.views}
+                      thumbnail={video.thumbnail}
+                      onPlay={() => handleVideoPlay(video)}
+                    />
+                    <CardContent className="pt-4">
+                      <h3 className="font-medium mb-2 line-clamp-2">{video.title}</h3>
+                      <p className="text-sm text-gray-600 mb-3">by {video.speaker}</p>
+                      <div className="flex justify-between gap-4 text-sm text-gray-500">
                         <div className="flex items-center gap-1">
                           <Users className="h-4 w-4" />
                           {video.views}
                         </div>
                         <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          {video.rating}
+                          <Clock className="h-4 w-4" />
+                          {video.duration}
                         </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+
+            {/* Video Player Modal */}
+            <VideoPlayer
+              videoId={selectedVideo?.id || ''}
+              title={selectedVideo?.title || ''}
+              isOpen={!!selectedVideo}
+              onClose={closeVideoPlayer}
+            />
           </TabsContent>
 
           {/* Glossary Tab */}
