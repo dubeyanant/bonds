@@ -108,8 +108,14 @@ export function Navigation({ activeView, onViewChange }: NavigationProps) {
                 </span>
               </div>
             </div>
-            <Button variant="ghost" size="sm" className="h-8 w-8 rounded-full bg-blue-100">
-              <User className="h-4 w-4 text-blue-600" />
+            <Button variant="ghost" size="sm" className="h-8 w-8 rounded-full p-0 overflow-hidden">
+              <img
+                src="/profile.jpg"
+                alt="Anant Dubey Profile"
+                width={32}
+                height={32}
+                className="rounded-full object-cover"
+              />
             </Button>
           </div>
         </div>
@@ -121,8 +127,14 @@ export function Navigation({ activeView, onViewChange }: NavigationProps) {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <div className="flex items-center gap-2">
-              <div className="bg-blue-600 p-1.5 rounded">
-                <TrendingUp className="h-5 w-5 text-white" />
+              <div className="relative">
+                <img
+                  src="/profile.jpg"
+                  alt="Anant Dubey Profile"
+                  width={32}
+                  height={32}
+                  className="rounded object-cover"
+                />
               </div>
               <div className="font-bold text-lg text-blue-600">SEBI Edu</div>
             </div>

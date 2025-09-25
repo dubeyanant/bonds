@@ -11,7 +11,7 @@ import { getFilteredBonds } from "./utils/bondFilters";
 
 
 export function BondSearch() {
-  const [activeTab, setActiveTab] = useState<string>("short-tenure");
+  const [activeTab, setActiveTab] = useState<string>("high-rated");
   const [selectedBond, setSelectedBond] = useState<Bond | null>(null);
   const [showBondDetail, setShowBondDetail] = useState(false);
 
@@ -31,7 +31,7 @@ export function BondSearch() {
 
   if (showBondDetail && selectedBond) {
     return (
-      <EnhancedBondDetail 
+      <EnhancedBondDetail
         onBack={handleBackFromDetail}
         onBuyAction={() => console.log('Buy action for', selectedBond.name)}
       />
@@ -52,8 +52,8 @@ export function BondSearch() {
         {/* Bond Categories Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
           <TabsList className="grid w-full grid-cols-4 h-24 bg-white border border-gray-200 rounded-xl p-2 shadow-sm gap-2">
-          <TabsTrigger 
-              value="high-rated" 
+            <TabsTrigger
+              value="high-rated"
               className="flex flex-col items-center justify-center h-20 space-y-2 text-sm font-medium rounded-lg transition-all duration-200 data-[state=active]:bg-green-50 data-[state=active]:text-green-700 data-[state=active]:shadow-md hover:bg-gray-50"
             >
               <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-100 text-green-600">
@@ -61,8 +61,8 @@ export function BondSearch() {
               </div>
               <span>High Rated</span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="short-tenure" 
+            <TabsTrigger
+              value="short-tenure"
               className="flex flex-col items-center justify-center h-20 space-y-2 text-sm font-medium rounded-lg transition-all duration-200 data-[state=active]:bg-blue-50 data-[state=active]:text-blue-700 data-[state=active]:shadow-md hover:bg-gray-50"
             >
               <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600">
@@ -70,8 +70,8 @@ export function BondSearch() {
               </div>
               <span>Short Tenure</span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="high-returns" 
+            <TabsTrigger
+              value="high-returns"
               className="flex flex-col items-center justify-center h-20 space-y-2 text-sm font-medium rounded-lg transition-all duration-200 data-[state=active]:bg-orange-50 data-[state=active]:text-orange-700 data-[state=active]:shadow-md hover:bg-gray-50"
             >
               <div className="flex items-center justify-center w-8 h-8 rounded-full bg-orange-100 text-orange-600">
@@ -79,8 +79,8 @@ export function BondSearch() {
               </div>
               <span>High Returns</span>
             </TabsTrigger>
-            <TabsTrigger 
-              value="government-bonds" 
+            <TabsTrigger
+              value="government-bonds"
               className="flex flex-col items-center justify-center h-20 space-y-2 text-sm font-medium rounded-lg transition-all duration-200 data-[state=active]:bg-purple-50 data-[state=active]:text-purple-700 data-[state=active]:shadow-md hover:bg-gray-50"
             >
               <div className="flex items-center justify-center w-8 h-8 rounded-full bg-purple-100 text-purple-600">
@@ -89,23 +89,6 @@ export function BondSearch() {
               <span>Government Bonds</span>
             </TabsTrigger>
           </TabsList>
-
-          {/* Short Tenure Tab */}
-          <TabsContent value="short-tenure" className="space-y-8">
-            <TabHeader
-              icon={<Clock className="h-6 w-6" />}
-              title="Short Tenure Bonds"
-              description="Bonds with maturity period of 3 years or less"
-              count={getFilteredBonds(sampleBonds, 'short-tenure').length + 8}
-              colorScheme="blue"
-              sortLabel="Sort by Yield"
-            />
-            <div className="grid gap-4">
-              {getFilteredBonds(sampleBonds, 'short-tenure').map(bond => (
-                <BondCard key={bond.id} bond={bond} onBondClick={handleBondClick} />
-              ))}
-            </div>
-          </TabsContent>
 
           {/* High Rated Tab */}
           <TabsContent value="high-rated" className="space-y-8">
@@ -119,6 +102,23 @@ export function BondSearch() {
             />
             <div className="grid gap-4">
               {getFilteredBonds(sampleBonds, 'high-rated').map(bond => (
+                <BondCard key={bond.id} bond={bond} onBondClick={handleBondClick} />
+              ))}
+            </div>
+          </TabsContent>
+
+          {/* Short Tenure Tab */}
+          <TabsContent value="short-tenure" className="space-y-8">
+            <TabHeader
+              icon={<Clock className="h-6 w-6" />}
+              title="Short Tenure Bonds"
+              description="Bonds with maturity period of 3 years or less"
+              count={getFilteredBonds(sampleBonds, 'short-tenure').length + 8}
+              colorScheme="blue"
+              sortLabel="Sort by Yield"
+            />
+            <div className="grid gap-4">
+              {getFilteredBonds(sampleBonds, 'short-tenure').map(bond => (
                 <BondCard key={bond.id} bond={bond} onBondClick={handleBondClick} />
               ))}
             </div>
