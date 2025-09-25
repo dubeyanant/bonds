@@ -188,7 +188,7 @@ export function EducationalHub() {
       description: "Understanding credit ratings, rating agencies, and what they mean for investors",
       duration: "40 min",
       difficulty: "Beginner",
-      ...getModuleState("4", 100, true),
+      ...getModuleState("2", 100, true),
       isLocked: false,
       topics: ["Rating Agencies", "Rating Scale", "Default Risk"],
       type: "video"
@@ -199,7 +199,7 @@ export function EducationalHub() {
       description: "Deep dive into how bonds are priced and what affects bond valuations",
       duration: "60 min",
       difficulty: "Intermediate",
-      ...getModuleState("2", 100, true),
+      ...getModuleState("3", 100, true),
       isLocked: false,
       topics: ["Present Value", "Interest Rates", "Credit Risk"],
       type: "interactive"
@@ -210,7 +210,7 @@ export function EducationalHub() {
       description: "Master different types of yields and how to calculate them",
       duration: "50 min",
       difficulty: "Intermediate",
-      ...getModuleState("3", 45, false),
+      ...getModuleState("4", 45, false),
       isLocked: false,
       topics: ["Current Yield", "YTM", "YTC", "Spread Analysis"],
       type: "article"
@@ -222,7 +222,7 @@ export function EducationalHub() {
       description: "Navigate the tax landscape for bond investments in India",
       duration: "35 min",
       difficulty: "Intermediate",
-      ...getModuleState("6", 0, false),
+      ...getModuleState("5", 0, false),
       isLocked: false,
       topics: ["Tax Treatment", "TDS", "Capital Gains"],
       type: "article"
@@ -233,19 +233,43 @@ export function EducationalHub() {
       description: "Advanced concepts of bond sensitivity and risk measurement",
       duration: "70 min",
       difficulty: "Advanced",
-      ...getModuleState("5", 0, false),
+      ...getModuleState("6", 0, false),
       isLocked: true,
       topics: ["Modified Duration", "Convexity", "Hedging"],
       type: "interactive"
     }
   ];
 
-  const glossaryTerms = [
-    { term: "Yield to Maturity (YTM)", definition: "The total return anticipated on a bond if held until maturity" },
-    { term: "Coupon Rate", definition: "The annual interest rate paid by the bond issuer" },
-    { term: "Duration", definition: "A measure of bond price sensitivity to interest rate changes" },
-    { term: "Credit Spread", definition: "The difference in yield between a corporate bond and government bond" },
-    { term: "Face Value", definition: "The principal amount that will be paid back at maturity" }
+  const glossaryTerms = [ 
+    { term: "Bond/Debenture", definition: "A debt instrument representing a loan made by an investor to an issuer (typically government or corporation). The issuer promises to repay the principal and usually pays interest (coupon) over a defined period." },
+    { term: "Issuer", definition: "The entity (Government, PSU, or Corporate) that borrows the money by issuing the bond." },
+    { term: "Face Value / Par Value / Principal", definition: "The nominal value of the bond (usually ₹1,000 in India) which is repaid to the bondholder on the maturity date." },
+    { term: "Maturity Date", definition: "The date on which the issuer repays the full Face Value (principal) of the bond to the investor." },
+    { term: "Coupon Rate", definition: "The fixed annual interest rate the issuer agrees to pay on the bond, expressed as a percentage of the Face Value." },
+    { term: "Coupon Payment / Frequency", definition: "The actual cash amount paid as interest, and how often it is paid (e.g., semi-annually or annually)." },
+    { term: "Accrued Interest", definition: "The interest a bond has earned since the last coupon payment date. A buyer must pay the seller this amount when purchasing the bond between coupon dates." },
+    { term: "G-Sec / Government Security", definition: "A tradable instrument issued by the Central or State Governments of India (e.g., Treasury Bills or Dated Securities)." },
+    { term: "Yield to Maturity (YTM)", definition: "The total annual rate of return an investor can expect if the bond is held until its maturity date, assuming all coupon payments are reinvested at the same rate." },
+    { term: "Current Yield", definition: "The annual interest (coupon) payment divided by the bond's current market price. It shows the return based only on income." },
+    { term: "Basis Point (bps)", definition: "A unit of measurement for interest rates and yields. 1 basis point (bps) is equal to 0.01%. (e.g., a 0.25% change is 25 bps)." },
+    { term: "Discount", definition: "The condition where a bond's market price is below its Face Value (Par Value)." },
+    { term: "Premium", definition: "The condition where a bond's market price is above its Face Value (Par Value)." },
+    { term: "Yield Curve", definition: "A line that plots the yields (YTM) of bonds with equal credit quality but different maturity dates. It helps in assessing interest rate expectations." },
+    { term: "Duration", definition: "A measure of a bond's price sensitivity to changes in interest rates. Higher duration means the bond's price will fluctuate more with a change in rates." },
+    { term: "Credit Rating", definition: "An assessment of the issuer's creditworthiness and ability to repay the debt, provided by agencies like CRISIL, ICRA, or CARE. (e.g., AAA is the highest safety)." },
+    { term: "Credit Risk / Default Risk", definition: "The risk that the bond issuer will be unable to make timely interest payments or repay the principal amount at maturity." },
+    { term: "Credit Spread", definition: "The difference in yield between a Corporate Bond and a comparable Government Bond (G-Sec). It is the extra compensation an investor demands for taking on credit risk." },
+    { term: "Default", definition: "The failure of a bond issuer to make a scheduled interest or principal payment." },
+    { term: "Investment Grade", definition: "A credit rating indicating a relatively low risk of default (e.g., BBB- and above)." },
+    { term: "High Yield Bonds (Junk Bonds)", definition: "Bonds with lower credit ratings (below Investment Grade) that offer higher yields to compensate investors for the significantly higher risk of default." },
+    { term: "Treasury Bill (T-Bill)", definition: "A short-term G-Sec issued by the Central Government, with a maturity of less than one year. T-Bills are zero-coupon securities." },
+    { term: "Zero-Coupon Bond", definition: "A bond that does not pay periodic interest (coupons). It is instead issued at a deep discount to its Face Value and redeemed at Par, with the capital appreciation being the investor's return." },
+    { term: "Callable Bond", definition: "A bond that gives the issuer the right to redeem the bond (pay back the principal) before its maturity date." },
+    { term: "Puttable Bond", definition: "A bond that gives the investor the right to demand early repayment of the principal from the issuer before its maturity date." },
+    { term: "ISIN", definition: "International Securities Identification Number—a unique 12-character code used globally to identify a specific bond." },
+    { term: "Primary Market", definition: "The market where the bond is first issued by the borrower (issuer) to investors." },
+    { term: "Secondary Market", definition: "The market where existing bonds are traded between investors after the initial issue." },
+    { term: "ASBA", definition: "Application Supported by Blocked Amount. A payment mechanism used in public issues (like bonds or IPOs) where the funds are blocked in the bank account but only debited upon final allotment." }
   ];
 
   // Video library is now managed by state and loaded from YouTube API
