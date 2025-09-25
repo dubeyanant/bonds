@@ -96,7 +96,7 @@ export function VideoThumbnail({
   };
 
   return (
-    <div className="hover:shadow-lg transition-shadow cursor-pointer" onClick={onPlay}>
+    <div className="transition-shadow cursor-pointer" onClick={onPlay}>
       <div className="relative">
         {!imageError ? (
           <img
@@ -116,8 +116,8 @@ export function VideoThumbnail({
             </div>
           </div>
         )}
-        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center rounded-t-lg hover:bg-opacity-30 transition-colors">
-          <Button size="lg" className="rounded-full">
+        <div className="absolute inset-0 bg-opacity-40 flex items-center justify-center rounded-t-lg hover:bg-opacity-30 transition-colors">
+          <Button size="lg" className="rounded-full cursor-pointer">
             <Play className="h-6 w-6" />
           </Button>
         </div>
