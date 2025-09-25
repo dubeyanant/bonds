@@ -5,31 +5,29 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Lightbulb, 
   TrendingUp, 
   TrendingDown, 
   PieChart, 
-  DollarSign, 
   Shield, 
   Target, 
   Brain, 
-  Calculator,
   Building,
   AlertTriangle,
-  CheckCircle,
   ArrowRight,
   Star,
   BarChart3,
-  Zap,
-  Award
 } from "lucide-react";
 
 interface PortfolioInputs {
   stocks: string;
   mutualFunds: string;
   fixedDeposits: string;
+  bonds: string;
+  otherInvestmentType: string;
+  otherInvestmentAmount: string;
 }
 
 interface BondSuggestion {
@@ -65,7 +63,10 @@ export function PortfolioSuggestion() {
   const [portfolioInputs, setPortfolioInputs] = useState<PortfolioInputs>({
     stocks: "",
     mutualFunds: "",
-    fixedDeposits: ""
+    fixedDeposits: "",
+    bonds: "",
+    otherInvestmentType: "",
+    otherInvestmentAmount: ""
   });
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
@@ -82,8 +83,10 @@ export function PortfolioSuggestion() {
     const stocks = parseFloat(portfolioInputs.stocks) || 0;
     const mutualFunds = parseFloat(portfolioInputs.mutualFunds) || 0;
     const fixedDeposits = parseFloat(portfolioInputs.fixedDeposits) || 0;
+    const bonds = parseFloat(portfolioInputs.bonds) || 0;
+    const otherInvestment = parseFloat(portfolioInputs.otherInvestmentAmount) || 0;
     
-    return stocks > 0 || mutualFunds > 0 || fixedDeposits > 0;
+    return stocks > 0 || mutualFunds > 0 || fixedDeposits > 0 || bonds > 0 || otherInvestment > 0;
   };
 
   const analyzePortfolio = async () => {
@@ -97,15 +100,23 @@ export function PortfolioSuggestion() {
     const stocks = parseFloat(portfolioInputs.stocks) || 0;
     const mutualFunds = parseFloat(portfolioInputs.mutualFunds) || 0;
     const fixedDeposits = parseFloat(portfolioInputs.fixedDeposits) || 0;
-    const totalPortfolio = stocks + mutualFunds + fixedDeposits;
+    const bonds = parseFloat(portfolioInputs.bonds) || 0;
+    const otherInvestment = parseFloat(portfolioInputs.otherInvestmentAmount) || 0;
+    const totalPortfolio = stocks + mutualFunds + fixedDeposits + bonds + otherInvestment;
     
     // Calculate current risk rating (higher stocks = higher risk)
     const stockWeight = stocks / totalPortfolio;
     const mfWeight = mutualFunds / totalPortfolio;
     const fdWeight = fixedDeposits / totalPortfolio;
+    const bondWeight = bonds / totalPortfolio;
+    const otherWeight = otherInvestment / totalPortfolio;
+    
+    // Risk factors: Stocks(8), MF(5), Others(varies), Bonds(2.5), FD(2)
+    const otherRiskFactor = getOtherInvestmentRiskFactor(portfolioInputs.otherInvestmentType);
     
     const currentRiskRating = Math.min(10, Math.max(1, 
-      (stockWeight * 8) + (mfWeight * 5) + (fdWeight * 2) + 1
+      (stockWeight * 8) + (mfWeight * 5) + (fdWeight * 2) + 
+      (bondWeight * 2.5) + (otherWeight * otherRiskFactor) + 1
     ));
     
     // Calculate reductions from high-risk assets first
@@ -161,11 +172,13 @@ export function PortfolioSuggestion() {
     const newStockWeight = (stocks - stockReduction) / totalPortfolio;
     const newMfWeight = (mutualFunds - mfReduction) / totalPortfolio;
     const newFdWeight = fixedDeposits / totalPortfolio;
-    const bondWeight = suggestedBondAllocation / totalPortfolio;
+    const newBondWeight = bondWeight + (suggestedBondAllocation / totalPortfolio);
+    const newOtherWeight = otherWeight;
     
     // Bonds have lower risk factor (2.5 instead of 3) for better risk improvement
     const improvedRiskRating = Math.min(10, Math.max(1,
-      (newStockWeight * 8) + (newMfWeight * 5) + (newFdWeight * 2) + (bondWeight * 2.5) + 0.5
+      (newStockWeight * 8) + (newMfWeight * 5) + (newFdWeight * 2) + 
+      (newBondWeight * 2.5) + (newOtherWeight * otherRiskFactor) + 0.5
     ));
     
     const result: AnalysisResult = {
@@ -221,6 +234,30 @@ export function PortfolioSuggestion() {
     if (rating <= 3) return "text-green-600";
     if (rating <= 6) return "text-yellow-600";
     return "text-red-600";
+  };
+
+  const getOtherInvestmentRiskFactor = (investmentType: string) => {
+    switch (investmentType) {
+      case 'gold': return 4;
+      case 'crypto': return 9;
+      case 'commodities': return 7;
+      case 'reits': return 5;
+      case 'forex': return 8;
+      case 'derivatives': return 10;
+      default: return 6;
+    }
+  };
+
+  const getInvestmentTypeLabel = (investmentType: string) => {
+    switch (investmentType) {
+      case 'gold': return 'Gold';
+      case 'crypto': return 'Cryptocurrency';
+      case 'commodities': return 'Commodities';
+      case 'reits': return 'REITs';
+      case 'forex': return 'Forex';
+      case 'derivatives': return 'Derivatives';
+      default: return 'Other';
+    }
   };
 
   return (
@@ -286,14 +323,64 @@ export function PortfolioSuggestion() {
                   </div>
 
                   {/* Total Portfolio Value */}
-                  {(portfolioInputs.stocks || portfolioInputs.mutualFunds || portfolioInputs.fixedDeposits) && (
+
+                  <div>
+                    <Label htmlFor="bonds">Bonds Investment (₹)</Label>
+                    <Input
+                      id="bonds"
+                      type="number"
+                      placeholder="Enter amount in bonds"
+                      value={portfolioInputs.bonds}
+                      onChange={(e) => handleInputChange('bonds', e.target.value)}
+                      className="mt-1"
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="otherInvestmentType">Other Investment Type</Label>
+                    <Select 
+                      value={portfolioInputs.otherInvestmentType} 
+                      onValueChange={(value) => handleInputChange('otherInvestmentType', value)}
+                    >
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Select investment type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="gold">Gold</SelectItem>
+                        <SelectItem value="crypto">Cryptocurrency</SelectItem>
+                        <SelectItem value="commodities">Commodities</SelectItem>
+                        <SelectItem value="reits">REITs</SelectItem>
+                        <SelectItem value="forex">Forex</SelectItem>
+                        <SelectItem value="derivatives">Derivatives</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {portfolioInputs.otherInvestmentType && (
+                    <div>
+                      <Label htmlFor="otherInvestmentAmount">{getInvestmentTypeLabel(portfolioInputs.otherInvestmentType)} Investment (₹)</Label>
+                      <Input
+                        id="otherInvestmentAmount"
+                        type="number"
+                        placeholder={`Enter amount in ${portfolioInputs.otherInvestmentType}`}
+                        value={portfolioInputs.otherInvestmentAmount}
+                        onChange={(e) => handleInputChange('otherInvestmentAmount', e.target.value)}
+                        className="mt-1"
+                      />
+                    </div>
+                  )}
+
+                  {(portfolioInputs.stocks || portfolioInputs.mutualFunds || portfolioInputs.fixedDeposits || portfolioInputs.bonds || portfolioInputs.otherInvestmentAmount) && (
                     <div className="pt-4 border-t">
                       <div className="text-sm text-gray-600 mb-1">Total Portfolio Value</div>
                       <div className="font-bold text-lg text-blue-600">
                         {formatCurrency(
                           (parseFloat(portfolioInputs.stocks) || 0) +
                           (parseFloat(portfolioInputs.mutualFunds) || 0) +
-                          (parseFloat(portfolioInputs.fixedDeposits) || 0)
+                          (parseFloat(portfolioInputs.fixedDeposits) || 0) +
+                          (parseFloat(portfolioInputs.bonds) || 0) +
+                          (parseFloat(portfolioInputs.otherInvestmentAmount) || 0)
                         )}
                       </div>
                     </div>
@@ -571,3 +658,4 @@ export function PortfolioSuggestion() {
     </div>
   );
 }
+

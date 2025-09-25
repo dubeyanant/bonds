@@ -42,32 +42,151 @@ interface Lesson {
 }
 
 export function BondLearningFlow({ onBack, onComplete, onProgress }: LearningFlowProps) {
-  const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
-  const [completedLessons, setCompletedLessons] = useState<Set<number>>(new Set());
-  const [quizAnswers, setQuizAnswers] = useState<{ [key: string]: string }>({});
+  // Initialize state from localStorage immediately
+  const getInitialLessonIndex = () => {
+    try {
+      const savedState = localStorage.getItem('bondLearningFlow_module1');
+      if (savedState) {
+        const { currentIndex } = JSON.parse(savedState);
+        if (typeof currentIndex === 'number' && currentIndex >= 0) {
+          console.log('🎯 Initializing with saved lesson index:', currentIndex);
+          return currentIndex;
+        }
+      }
+    } catch (error) {
+      console.error('Error reading initial state:', error);
+    }
+    console.log('🎯 Initializing with default lesson index: 0');
+    return 0;
+  };
+
+  const getInitialState = () => {
+    try {
+      const savedState = localStorage.getItem('bondLearningFlow_module1');
+      if (savedState) {
+        const { completed, answers } = JSON.parse(savedState);
+        return {
+          completedLessons: completed && Array.isArray(completed) ? new Set(completed) : new Set(),
+          quizAnswers: answers && typeof answers === 'object' ? answers : {}
+        };
+      }
+    } catch (error) {
+      console.error('Error reading initial state for completed/answers:', error);
+    }
+    return {
+      completedLessons: new Set(),
+      quizAnswers: {}
+    };
+  };
+
+  const initialState = getInitialState();
+  const [currentLessonIndex, setCurrentLessonIndex] = useState(getInitialLessonIndex());
+  const [completedLessons, setCompletedLessons] = useState<Set<number>>(initialState.completedLessons);
+  const [quizAnswers, setQuizAnswers] = useState<{ [key: string]: string }>(initialState.quizAnswers);
   const [showCertificate, setShowCertificate] = useState(false);
   const [moduleCompletedDate, setModuleCompletedDate] = useState<string>("");
 
+  // Helper function to check if all quiz questions are answered correctly
+  const areAllQuizQuestionsCorrect = () => {
+    const correctAnswers = {
+      q1: "Regular income through interest payments",
+      q2: "Government bonds (G-Secs)",
+      q3: "₹600"
+    };
+    
+    // Check if all questions are answered
+    if (Object.keys(quizAnswers).length !== 3) {
+      return false;
+    }
+    
+    // Check if all answers are correct
+    return correctAnswers.q1 === quizAnswers.q1 && 
+           correctAnswers.q2 === quizAnswers.q2 && 
+           correctAnswers.q3 === quizAnswers.q3;
+  };
+
+  // Check if next button should be disabled for current lesson
+  const isNextButtonDisabled = () => {
+    // For quiz lesson (lesson 4), disable until all questions are correct
+    if (lessons[currentLessonIndex]?.type === 'quiz' && lessons[currentLessonIndex]?.id === 4) {
+      return !areAllQuizQuestionsCorrect();
+    }
+    return false;
+  };
+
   // Load saved state from localStorage on component mount
   React.useEffect(() => {
+    console.log('🔍 BondLearningFlow: Component mounted, checking for saved progress...');
     const savedState = localStorage.getItem('bondLearningFlow_module1');
+    console.log('📦 Raw saved state:', savedState);
+    
     if (savedState) {
-      const { currentIndex, completed, answers } = JSON.parse(savedState);
-      setCurrentLessonIndex(currentIndex || 0);
-      setCompletedLessons(new Set(completed || []));
-      setQuizAnswers(answers || {});
+      try {
+        const { currentIndex, completed, answers, lastUpdated } = JSON.parse(savedState);
+        console.log('📊 Parsed saved state:', { currentIndex, completed, answers, lastUpdated });
+        
+        // Only set if we have a valid saved index
+        if (typeof currentIndex === 'number' && currentIndex >= 0) {
+          console.log(`✅ Restoring lesson index from ${currentLessonIndex} to ${currentIndex}`);
+          setCurrentLessonIndex(currentIndex);
+        } else {
+          console.log('❌ Invalid currentIndex:', currentIndex);
+        }
+        if (completed && Array.isArray(completed)) {
+          console.log('✅ Restoring completed lessons:', completed);
+          setCompletedLessons(new Set(completed));
+        }
+        if (answers && typeof answers === 'object') {
+          console.log('✅ Restoring quiz answers:', answers);
+          setQuizAnswers(answers);
+        }
+      } catch (error) {
+        console.error('❌ Error loading saved learning progress:', error);
+        // Clear corrupted data
+        localStorage.removeItem('bondLearningFlow_module1');
+      }
+    } else {
+      console.log('📭 No saved state found in localStorage');
     }
   }, []);
 
-  // Save state to localStorage whenever it changes
-  React.useEffect(() => {
+  // Function to save current state
+  const saveProgress = React.useCallback(() => {
     const stateToSave = {
       currentIndex: currentLessonIndex,
       completed: Array.from(completedLessons),
-      answers: quizAnswers
+      answers: quizAnswers,
+      lastUpdated: new Date().toISOString()
     };
+    
+    console.log('💾 Saving progress:', stateToSave);
     localStorage.setItem('bondLearningFlow_module1', JSON.stringify(stateToSave));
+    
+    // Verify the save worked
+    const verification = localStorage.getItem('bondLearningFlow_module1');
+    console.log('✅ Verified saved state:', verification);
   }, [currentLessonIndex, completedLessons, quizAnswers]);
+
+  // Save state to localStorage whenever it changes
+  React.useEffect(() => {
+    saveProgress();
+  }, [saveProgress]);
+
+  // Save progress before page unload
+  React.useEffect(() => {
+    const handleBeforeUnload = () => {
+      saveProgress();
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    
+    // Cleanup
+    return () => {
+      // Save progress on component unmount
+      saveProgress();
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [saveProgress]);
 
   const lessons: Lesson[] = [
     {
@@ -459,6 +578,17 @@ export function BondLearningFlow({ onBack, onComplete, onProgress }: LearningFlo
                   <span>Question 3: {quizAnswers.q3 === "₹600" ? "Correct!" : "Incorrect. 6% of ₹10,000 = ₹600."}</span>
                 </div>
               </div>
+              
+              {!areAllQuizQuestionsCorrect() && (
+                <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <Target className="h-4 w-4 text-yellow-600" />
+                    <span className="text-sm font-medium text-yellow-800">
+                      Please answer all questions correctly to proceed to the next lesson.
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -742,6 +872,7 @@ export function BondLearningFlow({ onBack, onComplete, onProgress }: LearningFlo
 
               <Button
                 onClick={markLessonComplete}
+                disabled={isNextButtonDisabled()}
               >
                 {currentLessonIndex === lessons.length - 1 ? (
                   <>

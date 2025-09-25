@@ -760,7 +760,7 @@ export function QuizSystem() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Brain className="h-5 w-5 text-purple-600" />
-                  Learning Summary
+                  AI Learning Analysis
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -769,7 +769,7 @@ export function QuizSystem() {
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                     <h4 className="font-medium text-blue-900 text-sm mb-2 flex items-center gap-1">
                       <Brain className="h-4 w-4" />
-                      AI Analysis
+                      Learning Summary
                     </h4>
                     <p className="text-blue-800 text-sm">
                       Based on your recent quiz performance, you demonstrate excellent understanding of credit fundamentals and risk assessment concepts. However, I notice you're struggling with quantitative bond valuation methods, particularly present value calculations and yield mathematics. Your strong grasp of qualitative analysis suggests you're ready to tackle more advanced pricing models with focused practice on the mathematical components.

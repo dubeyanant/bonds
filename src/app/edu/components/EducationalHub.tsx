@@ -401,7 +401,7 @@ export function EducationalHub() {
             {/* Modules Grid */}
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredModules.map((module) => (
-                <Card key={module.id} className={`relative ${module.isLocked ? 'opacity-60' : 'hover:shadow-lg transition-shadow cursor-pointer'}`}>
+                  <Card key={module.id} className={`relative ${module.isLocked ? 'opacity-60' : 'hover:shadow-lg transition-shadow'}`}>
                   {module.isLocked && (
                     <div className="absolute top-4 right-4 z-10">
                       <Lock className="h-5 w-5 text-gray-400" />
@@ -455,14 +455,14 @@ export function EducationalHub() {
 
                     <div className="mt-4">
                       {module.isLocked ? (
-                        <Button disabled className="w-full">
+                        <Button disabled className="w-full cursor-not-allowed">
                           <Lock className="h-4 w-4 mr-2" />
                           Locked
                         </Button>
                       ) : module.isCompleted ? (
                         <Button 
                           variant="outline" 
-                          className="w-full"
+                          className="w-full cursor-pointer"
                           onClick={() => handleModuleClick(module.id)}
                         >
                           <CheckCircle className="h-4 w-4 mr-2" />
@@ -470,7 +470,7 @@ export function EducationalHub() {
                         </Button>
                       ) : module.progress > 0 ? (
                         <Button 
-                          className="w-full"
+                          className="w-full cursor-pointer"
                           onClick={() => handleModuleClick(module.id)}
                         >
                           <Play className="h-4 w-4 mr-2" />
@@ -478,7 +478,7 @@ export function EducationalHub() {
                         </Button>
                       ) : (
                         <Button 
-                          className="w-full"
+                          className="w-full cursor-pointer"
                           onClick={() => handleModuleClick(module.id)}
                         >
                           <Play className="h-4 w-4 mr-2" />
@@ -518,7 +518,7 @@ export function EducationalHub() {
               <div className="flex items-center gap-2">
                 <input
                   type="text"
-                  placeholder="Paste YouTube URL to add a new educational video..."
+                  placeholder="Paste a URL to add a new educational video..."
                   value={newVideoUrl}
                   onChange={(e) => setNewVideoUrl(e.target.value)}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
