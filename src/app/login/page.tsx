@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -31,6 +31,36 @@ export default function LoginPage() {
   const [phone, setPhone] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [aiResponse, setAiResponse] = useState("");
+
+  // AI call on component mount
+  useEffect(() => {
+    const callGeminiAI = async () => {
+      try {
+        const response = await fetch('/api/generate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            prompt: 'Generate a brief welcome message for users visiting a bond trading platform login page. Make it professional and encouraging, mentioning investment opportunities in bonds. Keep it under 50 words.'
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setAiResponse(data.text);
+          console.log('AI Welcome Message:', data.text);
+        } else {
+          console.error('Failed to get AI response');
+        }
+      } catch (error) {
+        console.error('Error calling AI:', error);
+      }
+    };
+
+    callGeminiAI();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

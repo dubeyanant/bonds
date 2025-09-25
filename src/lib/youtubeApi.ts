@@ -33,7 +33,7 @@ export interface ProcessedVideoData {
 }
 
 // YouTube API configuration
-const YOUTUBE_API_KEY = 'AIzaSyAUn8NLJc-j7u3Sb9kJMUp2rg7d9EpCpfY';
+const YOUTUBE_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;
 const YOUTUBE_API_BASE_URL = 'https://www.googleapis.com/youtube/v3';
 
 /**
@@ -43,6 +43,11 @@ const YOUTUBE_API_BASE_URL = 'https://www.googleapis.com/youtube/v3';
  */
 export async function fetchYouTubeVideoDetails(videoId: string): Promise<YouTubeVideoDetails | null> {
   try {
+    if (!YOUTUBE_API_KEY) {
+      console.error('YouTube API key is not configured. Please set NEXT_PUBLIC_GOOGLE_API_KEY in your .env.local file.');
+      return null;
+    }
+
     const response = await fetch(
       `${YOUTUBE_API_BASE_URL}/videos?part=snippet,statistics,contentDetails&id=${videoId}&key=${YOUTUBE_API_KEY}`
     );
@@ -86,6 +91,11 @@ export async function fetchYouTubeVideoDetails(videoId: string): Promise<YouTube
  */
 export async function fetchMultipleYouTubeVideos(videoIds: string[]): Promise<YouTubeVideoDetails[]> {
   try {
+    if (!YOUTUBE_API_KEY) {
+      console.error('YouTube API key is not configured. Please set NEXT_PUBLIC_GOOGLE_API_KEY in your .env.local file.');
+      return [];
+    }
+
     const idsString = videoIds.join(',');
     const response = await fetch(
       `${YOUTUBE_API_BASE_URL}/videos?part=snippet,statistics,contentDetails&id=${idsString}&key=${YOUTUBE_API_KEY}`
