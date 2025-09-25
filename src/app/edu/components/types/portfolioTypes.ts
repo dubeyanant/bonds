@@ -41,3 +41,44 @@ export interface AnalysisResult {
   riskReduction: number;
   expectedReturns: number;
 }
+
+// API Request/Response Types
+export interface RiskPredictionRequest {
+  equity: number;
+  mf: number;
+  fd: number;
+  bonds: number;
+}
+
+export interface RiskPredictionResponse {
+  risk_score: number;
+  risk_label: string;
+}
+
+export interface RebalanceRequest {
+  equity: number;
+  mf: number;
+  fd: number;
+  bonds: number;
+}
+
+export interface RebalanceResponse {
+  original: {
+    equity: number;
+    mf: number;
+    fd: number;
+    bonds: number;
+  };
+  suggested: {
+    equity: number;
+    mf: number;
+    fd: number;
+    bonds: number;
+  };
+  moves: {
+    from_equity: number;
+    from_mf: number;
+    from_fd: number;
+  };
+  notes: string;
+}

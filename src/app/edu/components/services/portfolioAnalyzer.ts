@@ -1,10 +1,127 @@
 import { PortfolioInputs, AnalysisResult, BondSuggestion } from "../types/portfolioTypes";
 import { getOtherInvestmentRiskFactor } from "../utils/portfolioUtils";
+import { predictRisk, rebalancePortfolio, convertToApiFormat } from "./portfolioApi";
 
 export const analyzePortfolio = async (portfolioInputs: PortfolioInputs): Promise<AnalysisResult> => {
-  // Simulate API call with analysis logic
-  await new Promise(resolve => setTimeout(resolve, 3000));
+  const stocks = parseFloat(portfolioInputs.stocks) || 0;
+  const mutualFunds = parseFloat(portfolioInputs.mutualFunds) || 0;
+  const fixedDeposits = parseFloat(portfolioInputs.fixedDeposits) || 0;
+  const bonds = parseFloat(portfolioInputs.bonds) || 0;
+  const otherInvestment = parseFloat(portfolioInputs.otherInvestmentAmount) || 0;
+  const totalPortfolio = stocks + mutualFunds + fixedDeposits + bonds + otherInvestment;
   
+  // Convert to API format (excluding other investments for now as APIs don't support them)
+  const apiPortfolio = convertToApiFormat(stocks, mutualFunds, fixedDeposits, bonds);
+  
+  try {
+    // Call both APIs in parallel for better performance
+    const [riskResult, rebalanceResult] = await Promise.all([
+      predictRisk(apiPortfolio),
+      rebalancePortfolio(apiPortfolio)
+    ]);
+    
+    // Calculate current and improved risk ratings from API
+    const currentRiskRating = riskResult.risk_score;
+    
+    // For improved risk rating, we'll use the rebalanced portfolio
+    const improvedPortfolio = convertToApiFormat(
+      rebalanceResult.suggested.equity,
+      rebalanceResult.suggested.mf,
+      rebalanceResult.suggested.fd,
+      rebalanceResult.suggested.bonds
+    );
+    
+    const improvedRiskResult = await predictRisk(improvedPortfolio);
+    const improvedRiskRating = improvedRiskResult.risk_score;
+    
+    // Calculate suggested bond allocation from the rebalance API
+    const suggestedBondAllocation = rebalanceResult.suggested.bonds - bonds;
+    
+    const mockSuggestions: BondSuggestion[] = [
+      {
+        id: "1",
+        name: "10 Year Government Security",
+        issuer: "Government of India",
+        rating: "AAA",
+        currentYield: 7.24,
+        currentPrice: 1020,
+        maturityDate: "2034-01-15",
+        suggestedAmount: suggestedBondAllocation * 0.4,
+        units: Math.floor((suggestedBondAllocation * 0.4) / 1020),
+        riskContribution: 0.5,
+        reason: "Sovereign guarantee provides stability and reduces overall portfolio risk"
+      },
+      {
+        id: "2", 
+        name: "HDFC Bank Bond Series XV",
+        issuer: "HDFC Bank",
+        rating: "AAA",
+        currentYield: 8.45,
+        currentPrice: 985,
+        maturityDate: "2029-03-20",
+        suggestedAmount: suggestedBondAllocation * 0.35,
+        units: Math.floor((suggestedBondAllocation * 0.35) / 985),
+        riskContribution: 0.8,
+        reason: "High-quality corporate bond offering better yields while maintaining low risk"
+      },
+      {
+        id: "3",
+        name: "NABARD Rural Infrastructure Bond",
+        issuer: "NABARD",
+        rating: "AAA",
+        currentYield: 7.65,
+        currentPrice: 1015,
+        maturityDate: "2031-04-30",
+        suggestedAmount: suggestedBondAllocation * 0.25,
+        units: Math.floor((suggestedBondAllocation * 0.25) / 1015),
+        riskContribution: 0.6,
+        reason: "Infrastructure bonds with tax benefits and strong credit profile"
+      }
+    ];
+
+    const result: AnalysisResult = {
+      currentRiskRating: Math.round(currentRiskRating * 10) / 10,
+      improvedRiskRating: Math.round(improvedRiskRating * 10) / 10,
+      totalInvestment: Math.max(0, suggestedBondAllocation),
+      allocationChanges: {
+        stocks: {
+          current: stocks,
+          suggested: rebalanceResult.suggested.equity,
+          change: rebalanceResult.suggested.equity - stocks
+        },
+        mutualFunds: {
+          current: mutualFunds,
+          suggested: rebalanceResult.suggested.mf,
+          change: rebalanceResult.suggested.mf - mutualFunds
+        },
+        fixedDeposits: {
+          current: fixedDeposits,
+          suggested: rebalanceResult.suggested.fd,
+          change: rebalanceResult.suggested.fd - fixedDeposits
+        },
+        bonds: {
+          current: bonds,
+          suggested: rebalanceResult.suggested.bonds,
+          change: rebalanceResult.suggested.bonds - bonds
+        }
+      },
+      suggestions: mockSuggestions,
+      riskReduction: currentRiskRating - improvedRiskRating,
+      expectedReturns: 7.8 // Expected blended return
+    };
+    
+    return result;
+    
+  } catch (error) {
+    console.error('API calls failed, falling back to mock calculations:', error);
+    
+    // Fallback to original mock calculations if APIs fail
+    return await analyzePortfolioFallback(portfolioInputs);
+  }
+};
+
+// Fallback function with original mock calculations
+const analyzePortfolioFallback = async (portfolioInputs: PortfolioInputs): Promise<AnalysisResult> => {
   const stocks = parseFloat(portfolioInputs.stocks) || 0;
   const mutualFunds = parseFloat(portfolioInputs.mutualFunds) || 0;
   const fixedDeposits = parseFloat(portfolioInputs.fixedDeposits) || 0;
@@ -28,8 +145,8 @@ export const analyzePortfolio = async (portfolioInputs: PortfolioInputs): Promis
   ));
   
   // Calculate reductions from high-risk assets first
-  const stockReduction = Math.min(stocks * 0.25, stocks); // Reduce up to 25% of stocks
-  const mfReduction = Math.min(mutualFunds * 0.15, mutualFunds); // Reduce up to 15% of MF
+  const stockReduction = Math.min(stocks * 0.25, stocks);
+  const mfReduction = Math.min(mutualFunds * 0.15, mutualFunds);
   
   // Bond allocation equals exactly what we remove from other assets
   const suggestedBondAllocation = stockReduction + mfReduction;
@@ -110,14 +227,14 @@ export const analyzePortfolio = async (portfolioInputs: PortfolioInputs): Promis
         change: 0
       },
       bonds: {
-        current: 0,
-        suggested: suggestedBondAllocation,
+        current: bonds,
+        suggested: bonds + suggestedBondAllocation,
         change: suggestedBondAllocation
       }
     },
     suggestions: mockSuggestions,
     riskReduction: currentRiskRating - improvedRiskRating,
-    expectedReturns: 7.8 // Expected blended return
+    expectedReturns: 7.8
   };
   
   return result;

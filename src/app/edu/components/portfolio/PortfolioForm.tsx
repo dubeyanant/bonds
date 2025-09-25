@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { PieChart, Brain, Edit3, X, ChevronDown } from "lucide-react";
+import { PieChart, Brain, Edit3, X } from "lucide-react";
 import { PortfolioInputs } from "../types/portfolioTypes";
 import { formatCurrency, getInvestmentTypeLabel, validatePortfolioInputs, calculateTotalPortfolio } from "../utils/portfolioUtils";
 import { useState } from "react";
