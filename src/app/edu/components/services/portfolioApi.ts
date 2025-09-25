@@ -5,7 +5,8 @@ import {
   RebalanceResponse,
 } from "../types/portfolioTypes";
 
-const API_BASE_URL = "http://127.0.0.1:8000";
+// Use relative URL for API calls - Next.js will proxy to the backend
+const API_BASE_URL = "/api/portfolio";
 
 /**
  * Call the risk prediction API
@@ -16,6 +17,12 @@ export const predictRisk = async (
   portfolio: RiskPredictionRequest
 ): Promise<RiskPredictionResponse> => {
   try {
+    console.log("🔍 [Risk Prediction API] Request:", {
+      url: `${API_BASE_URL}/predict_risk`,
+      method: "POST",
+      payload: portfolio
+    });
+
     const response = await fetch(`${API_BASE_URL}/predict_risk`, {
       method: "POST",
       headers: {
@@ -24,14 +31,17 @@ export const predictRisk = async (
       body: JSON.stringify(portfolio),
     });
 
+    console.log("📡 [Risk Prediction API] Response status:", response.status, response.statusText);
+
     if (!response.ok) {
       throw new Error(`Risk prediction API failed: ${response.status} ${response.statusText}`);
     }
 
     const data: RiskPredictionResponse = await response.json();
+    console.log("✅ [Risk Prediction API] Response data:", data);
     return data;
   } catch (error) {
-    console.error("Error calling risk prediction API:", error);
+    console.error("❌ [Risk Prediction API] Error:", error);
     throw error;
   }
 };
@@ -45,6 +55,12 @@ export const rebalancePortfolio = async (
   portfolio: RebalanceRequest
 ): Promise<RebalanceResponse> => {
   try {
+    console.log("⚖️ [Portfolio Rebalance API] Request:", {
+      url: `${API_BASE_URL}/rebalance`,
+      method: "POST",
+      payload: portfolio
+    });
+
     const response = await fetch(`${API_BASE_URL}/rebalance`, {
       method: "POST",
       headers: {
@@ -53,14 +69,17 @@ export const rebalancePortfolio = async (
       body: JSON.stringify(portfolio),
     });
 
+    console.log("📡 [Portfolio Rebalance API] Response status:", response.status, response.statusText);
+
     if (!response.ok) {
       throw new Error(`Portfolio rebalance API failed: ${response.status} ${response.statusText}`);
     }
 
     const data: RebalanceResponse = await response.json();
+    console.log("✅ [Portfolio Rebalance API] Response data:", data);
     return data;
   } catch (error) {
-    console.error("Error calling portfolio rebalance API:", error);
+    console.error("❌ [Portfolio Rebalance API] Error:", error);
     throw error;
   }
 };
