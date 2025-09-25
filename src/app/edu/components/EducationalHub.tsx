@@ -180,7 +180,7 @@ export function EducationalHub() {
       ...getModuleState("1", 0, false),
       isLocked: false,
       topics: ["Bond Basics", "Types of Bonds", "Bond vs Stocks"],
-      type: "video"
+      type: "interactive"
     },
     {
       id: "2",
@@ -202,7 +202,7 @@ export function EducationalHub() {
       ...getModuleState("3", 100, true),
       isLocked: false,
       topics: ["Present Value", "Interest Rates", "Credit Risk"],
-      type: "interactive"
+      type: "video"
     },
     {
       id: "4",

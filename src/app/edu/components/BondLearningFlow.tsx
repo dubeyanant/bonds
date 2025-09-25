@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Certificate } from "@/components/Certificate";
 import {
   ArrowLeft,
   ArrowRight,
@@ -44,6 +45,8 @@ export function BondLearningFlow({ onBack, onComplete, onProgress }: LearningFlo
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
   const [completedLessons, setCompletedLessons] = useState<Set<number>>(new Set());
   const [quizAnswers, setQuizAnswers] = useState<{ [key: string]: string }>({});
+  const [showCertificate, setShowCertificate] = useState(false);
+  const [moduleCompletedDate, setModuleCompletedDate] = useState<string>("");
 
   // Load saved state from localStorage on component mount
   React.useEffect(() => {
@@ -549,7 +552,10 @@ export function BondLearningFlow({ onBack, onComplete, onProgress }: LearningFlo
           </div>
 
           <div className="text-center">
-            <Button onClick={onComplete} size="lg" className="w-full md:w-auto">
+            <Button onClick={() => {
+              setModuleCompletedDate(new Date().toISOString());
+              setShowCertificate(true);
+            }} size="lg" className="w-full md:w-auto">
               <Award className="h-4 w-4 mr-2" />
               Complete Module & Earn Certificate
             </Button>
@@ -589,10 +595,17 @@ export function BondLearningFlow({ onBack, onComplete, onProgress }: LearningFlo
   const markLessonComplete = () => {
     setCompletedLessons(prev => new Set([...prev, currentLesson.id]));
     if (currentLessonIndex === lessons.length - 1) {
-      onComplete();
+      // Show certificate instead of immediately calling onComplete
+      setModuleCompletedDate(new Date().toISOString());
+      setShowCertificate(true);
     } else {
       nextLesson();
     }
+  };
+
+  const handleCertificateClose = () => {
+    setShowCertificate(false);
+    onComplete();
   };
 
   // Update progress when component mounts or lesson changes
@@ -746,6 +759,20 @@ export function BondLearningFlow({ onBack, onComplete, onProgress }: LearningFlo
           </CardContent>
         </Card>
       </div>
+
+      {/* Certificate Modal */}
+      <Certificate
+        isOpen={showCertificate}
+        onClose={handleCertificateClose}
+        studentName="Anant Dubey"
+        moduleName="Introduction to Bonds"
+        completionDate={moduleCompletedDate}
+        score={Math.round((Object.keys(quizAnswers).length === 3 ? 
+          (Number(quizAnswers.q1 === "Regular income through interest payments") +
+           Number(quizAnswers.q2 === "Government bonds (G-Secs)") +
+           Number(quizAnswers.q3 === "₹600")) / 3 * 100 : 100))}
+        duration="45 minutes"
+      />
     </div>
   );
 }
