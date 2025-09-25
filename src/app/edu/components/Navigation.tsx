@@ -7,8 +7,6 @@ import {
   Target,
   PieChart,
   TrendingUp,
-  Bell,
-  User,
   Menu,
   X,
   Star,
