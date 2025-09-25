@@ -1,49 +1,17 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { EducationalHub } from "./components/EducationalHub";
-import { BondSearch } from "./components/BondSearch";
-import { QuizSystem } from "./components/QuizSystem";
-import { PortfolioSuggestion } from "./components/PortfolioSuggestion";
-import { Navigation } from "./components/Navigation";
+import { Suspense } from "react";
+import EduPageClient from "./components/EduPageClient";
 
 export default function EduPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [activeView, setActiveView] = useState("education");
-
-  // Update activeView when URL parameters change
-  useEffect(() => {
-    const tab = searchParams.get('tab');
-    if (tab && ['education', 'quiz', 'search', 'suggestions'].includes(tab)) {
-      setActiveView(tab);
-    }
-  }, [searchParams]);
-
-  // Handle view change with URL update
-  const handleViewChange = (view: string) => {
-    setActiveView(view);
-    router.push(`/edu?tab=${view}`, { scroll: false });
-  };
-
-  const renderActiveView = () => {
-    switch (activeView) {
-      case "search":
-        return <BondSearch />;
-      case "education":
-        return <EducationalHub />;
-      case "quiz":
-        return <QuizSystem />;
-      case "suggestions":
-        return <PortfolioSuggestion />;
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navigation activeView={activeView} onViewChange={handleViewChange} />
-      {renderActiveView()}
-    </div>
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <p className="text-gray-600">Loading Educational Hub...</p>
+        </div>
+      </div>
+    }>
+      <EduPageClient />
+    </Suspense>
   );
 }
