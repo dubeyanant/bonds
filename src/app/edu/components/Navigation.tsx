@@ -125,14 +125,8 @@ export function Navigation({ activeView, onViewChange }: NavigationProps) {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <div className="flex items-center gap-2">
-              <div className="relative">
-                <img
-                  src="/profile.jpg"
-                  alt="Anant Dubey Profile"
-                  width={32}
-                  height={32}
-                  className="rounded object-cover"
-                />
+              <div className="bg-blue-600 p-2 rounded-lg">
+                <TrendingUp className="h-5 w-5 text-white" />
               </div>
               <div className="font-bold text-lg text-blue-600">SEBI Edu</div>
             </div>

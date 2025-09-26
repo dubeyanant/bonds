@@ -160,13 +160,26 @@ Ensure the response is a valid JSON object that can be parsed directly.`;
     console.log(prompt);
     console.log('=== END PROMPT ===');
 
-    const response = await fetch('/api/generate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ prompt })
-    });
+    // Enforce a 20s timeout on the AI API call
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
+    let response: Response;
+    try {
+      response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt }),
+        signal: controller.signal,
+      });
+    } catch (err) {
+      // Ensure timer is cleared on error (including timeout)
+      clearTimeout(timeoutId);
+      throw err;
+    }
+    // Clear timeout once we have a response
+    clearTimeout(timeoutId);
 
     if (response.ok) {
       const data = await response.json();

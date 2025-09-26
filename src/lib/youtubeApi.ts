@@ -224,6 +224,6 @@ export function extractVideoIdFromUrl(url: string): string | null {
 // Pre-defined educational video IDs for bonds and finance
 export const EDUCATIONAL_VIDEO_IDS = [
   '55ReEsDaZoo',
-  'nMLVn_n1hb8',
+  'ccHZyB-sk7A',
   'YBg3q-3XscU'
 ];

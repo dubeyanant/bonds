@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Star, Building, ArrowRight } from "lucide-react";
@@ -12,8 +11,6 @@ interface BondSuggestionsProps {
 }
 
 export function BondSuggestions({ analysisResult }: BondSuggestionsProps) {
-  const [showDetails, setShowDetails] = useState(false);
-
   return (
     <Card>
       <CardHeader>
@@ -94,43 +91,6 @@ export function BondSuggestions({ analysisResult }: BondSuggestionsProps) {
             </Card>
           ))}
         </div>
-
-        <div className="mt-4 text-center">
-          <Button 
-            variant="ghost" 
-            size="sm"
-            onClick={() => setShowDetails(!showDetails)}
-          >
-            {showDetails ? 'Hide' : 'Show'} Detailed Analysis
-            <ArrowRight className={`h-4 w-4 ml-1 transition-transform ${showDetails ? 'rotate-90' : ''}`} />
-          </Button>
-        </div>
-
-        {showDetails && (
-          <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <h4 className="font-medium text-blue-800 mb-3">Detailed Portfolio Analysis</h4>
-            <div className="grid md:grid-cols-2 gap-4 text-sm text-blue-700">
-              <div>
-                <div className="font-medium mb-2">Risk Metrics:</div>
-                <ul className="space-y-1">
-                  <li>• Current portfolio Sharpe ratio: 1.2</li>
-                  <li>• Improved Sharpe ratio: 1.6</li>
-                  <li>• Volatility reduction: 15%</li>
-                  <li>• Maximum drawdown: -12% → -8%</li>
-                </ul>
-              </div>
-              <div>
-                <div className="font-medium mb-2">Return Analysis:</div>
-                <ul className="space-y-1">
-                  <li>• Expected annual return: 7.8%</li>
-                  <li>• Monthly income from bonds: ₹{((analysisResult.totalInvestment * 0.075) / 12).toLocaleString()}</li>
-                  <li>• Tax-efficient income stream</li>
-                  <li>• Inflation-protected growth</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        )}
       </CardContent>
     </Card>
   );

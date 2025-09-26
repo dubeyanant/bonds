@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Lightbulb } from "lucide-react";
 
 // Import types
 import { PortfolioInputs, AnalysisResult } from "./types/portfolioTypes";
@@ -15,8 +14,6 @@ import { AIFeaturesInfo } from "./portfolio/AIFeaturesInfo";
 
 // Import services
 import { analyzePortfolio } from "./services/portfolioAnalyzer";
-
-
 
 export function PortfolioSuggestion() {
   const [portfolioInputs, setPortfolioInputs] = useState<PortfolioInputs>({
@@ -42,6 +39,10 @@ export function PortfolioSuggestion() {
     try {
       const result = await analyzePortfolio(portfolioInputs);
       setAnalysisResult(result);
+      // Scroll to top after the new content is rendered
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 100);
     } catch (error) {
       console.error('Analysis failed:', error);
     } finally {
@@ -120,4 +121,3 @@ export function PortfolioSuggestion() {
     </div>
   );
 }
-

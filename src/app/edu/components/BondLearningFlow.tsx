@@ -704,7 +704,11 @@ export function BondLearningFlow({ onBack, onComplete, onProgress }: LearningFlo
       setCurrentLessonIndex(currentLessonIndex + 1);
       updateProgress();
       // Scroll to top when navigating to next lesson
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => {
+        if (typeof window !== 'undefined') {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }, 100);
     }
   };
 

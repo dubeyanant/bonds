@@ -68,8 +68,13 @@ export function QuizResults({
             )}
 
             <div className="flex justify-center gap-4">
-              <Button onClick={onRestartQuiz}>
-                Try Another Quiz
+              <Button onClick={() => {
+                if (typeof window !== 'undefined') {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+                onRestartQuiz();
+              }}>
+                Check Analysis
               </Button>
               <Button variant="outline" onClick={onRetakeQuiz}>
                 <RefreshCw className="h-4 w-4 mr-2" />

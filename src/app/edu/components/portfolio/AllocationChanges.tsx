@@ -5,7 +5,8 @@ import {
   PieChart, 
   Shield, 
   Building, 
-  AlertTriangle 
+  AlertTriangle,
+  Banknote
 } from "lucide-react";
 import { AnalysisResult } from "../types/portfolioTypes";
 import { formatCurrency } from "../utils/portfolioUtils";
@@ -17,6 +18,7 @@ interface AllocationChangesProps {
 export function AllocationChanges({ analysisResult }: AllocationChangesProps) {
   const getAssetIcon = (key: string) => {
     switch (key) {
+      case 'bonds': return <Banknote className="h-4 w-4 text-yellow-600" />;
       case 'stocks': return <TrendingUp className="h-4 w-4 text-red-600" />;
       case 'mutualFunds': return <PieChart className="h-4 w-4 text-blue-600" />;
       case 'fixedDeposits': return <Shield className="h-4 w-4 text-green-600" />;
@@ -26,6 +28,7 @@ export function AllocationChanges({ analysisResult }: AllocationChangesProps) {
 
   const getAssetColor = (key: string) => {
     switch (key) {
+      case 'bonds': return 'bg-gradient-to-r from-yellow-200 via-yellow-300 to-yellow-200 bg-[length:200%_100%] animate-shimmer';
       case 'stocks': return 'bg-red-100';
       case 'mutualFunds': return 'bg-blue-100';
       case 'fixedDeposits': return 'bg-green-100';
@@ -35,11 +38,19 @@ export function AllocationChanges({ analysisResult }: AllocationChangesProps) {
 
   const getAssetLabel = (key: string) => {
     switch (key) {
+      case 'bonds': return 'Bonds';
       case 'mutualFunds': return 'Mutual Funds';
       case 'fixedDeposits': return 'Fixed Deposits';
       default: return key.charAt(0).toUpperCase() + key.slice(1);
     }
   };
+
+  // Sort allocations to show bonds first
+  const sortedAllocations = Object.entries(analysisResult.allocationChanges).sort(([keyA], [keyB]) => {
+    if (keyA === 'bonds') return -1;
+    if (keyB === 'bonds') return 1;
+    return 0;
+  });
 
   return (
     <Card>
@@ -51,8 +62,17 @@ export function AllocationChanges({ analysisResult }: AllocationChangesProps) {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {Object.entries(analysisResult.allocationChanges).map(([key, allocation]) => (
-            <div key={key} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+          {sortedAllocations.map(([key, allocation]) => {
+            const isBonds = key === 'bonds';
+            return (
+            <div 
+              key={key} 
+              className={`flex items-center justify-between p-4 rounded-lg transition-all duration-300 ${
+                isBonds 
+                  ? 'bg-gradient-to-r from-yellow-50 via-amber-50 to-yellow-50 border-2 border-yellow-300 shadow-lg hover:shadow-xl' 
+                  : 'bg-gray-50 hover:bg-gray-100'
+              }`}
+            >
               <div className="flex items-center gap-3">
                 <div className={`p-2 rounded-lg ${getAssetColor(key)}`}>
                   {getAssetIcon(key)}
@@ -77,7 +97,8 @@ export function AllocationChanges({ analysisResult }: AllocationChangesProps) {
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Implementation Timeline */}

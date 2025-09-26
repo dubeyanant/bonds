@@ -17,7 +17,7 @@ export function BondSearch() {
 
 
   const handleBondClick = (bond: Bond) => {
-    if (bond.id === "2") { // HDFC Bank Bond Series XV
+    if (bond.id === "1") { // HDFC Bank Bond Series XV
       setSelectedBond(bond);
       setShowBondDetail(true);
     }

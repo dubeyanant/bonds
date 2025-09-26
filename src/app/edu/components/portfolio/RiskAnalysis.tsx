@@ -9,7 +9,7 @@ interface RiskAnalysisProps {
 
 export function RiskAnalysis({ analysisResult }: RiskAnalysisProps) {
   return (
-    <Card className="sticky top-8 w-72 shadow-lg">
+    <Card className="sticky top-8 w-72">
       <CardHeader className="pb-4">
         <CardTitle className="flex items-center gap-2 text-lg">
           <Shield className="h-5 w-5 text-green-600" />

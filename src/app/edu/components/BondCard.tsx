@@ -109,7 +109,13 @@ export function BondCard({ bond, onBondClick }: BondCardProps) {
         <div className="flex justify-end mt-4 pt-4 border-t">
           <Button 
             size="sm"
-            onClick={() => onBondClick(bond)}
+            onClick={() => {
+              // Scroll to top smoothly when opening details
+              if (typeof window !== 'undefined') {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+              onBondClick(bond);
+            }}
             disabled={bond.id !== "1"}
           >
             {bond.id === "1" ? "View Details" : "Coming Soon"}
