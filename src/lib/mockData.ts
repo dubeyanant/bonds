@@ -15,6 +15,8 @@ export interface Bond {
   remainingMonths?: number;
   investedAmount: number;
   nextCoupon: string;
+  issueDate: string;
+  status: 'accepted' | 'executed' | 'null';
 }
 
 // Legacy type aliases for backward compatibility
@@ -39,6 +41,8 @@ export const allBonds: Bond[] = [
     faceValue: 1000,
     investedAmount: 49000,
     nextCoupon: "2024-10-20",
+    issueDate: "2024-01-20",
+    status: "executed",
   },
   {
     id: "2",
@@ -56,6 +60,8 @@ export const allBonds: Bond[] = [
     faceValue: 1000,
     investedAmount: 100000,
     nextCoupon: "2024-10-15",
+    issueDate: "2023-01-15",
+    status: "executed",
   },
   {
     id: "3",
@@ -73,6 +79,8 @@ export const allBonds: Bond[] = [
     faceValue: 1000,
     investedAmount: 25250,
     nextCoupon: "2024-12-15",
+    issueDate: "2023-06-15",
+    status: "executed",
   },
   {
     id: "4",
@@ -90,6 +98,8 @@ export const allBonds: Bond[] = [
     faceValue: 1000,
     investedAmount: 0,
     nextCoupon: "2024-12-22",
+    issueDate: "2024-06-20",
+    status: "null",
   },
   {
     id: "5",
@@ -107,6 +117,8 @@ export const allBonds: Bond[] = [
     faceValue: 1000,
     investedAmount: 0,
     nextCoupon: "2025-01-09",
+    issueDate: "2024-09-10",
+    status: "null",
   },
   {
     id: "6",
@@ -124,6 +136,8 @@ export const allBonds: Bond[] = [
     faceValue: 3240,
     investedAmount: 0,
     nextCoupon: "2025-01-09",
+    issueDate: "2024-04-14",
+    status: "null",
   },
   {
     id: "7",
@@ -141,6 +155,8 @@ export const allBonds: Bond[] = [
     faceValue: 1000,
     investedAmount: 0,
     nextCoupon: "2025-03-15",
+    issueDate: "2024-03-15",
+    status: "null",
   },
   {
     id: "8",
@@ -158,6 +174,8 @@ export const allBonds: Bond[] = [
     faceValue: 1000,
     investedAmount: 0,
     nextCoupon: "2025-06-30",
+    issueDate: "2023-12-31",
+    status: "accepted",
   },
   {
     id: "9",
@@ -175,6 +193,8 @@ export const allBonds: Bond[] = [
     faceValue: 1000,
     investedAmount: 0,
     nextCoupon: "2025-02-20",
+    issueDate: "2024-08-20",
+    status: "accepted",
   },
   {
     id: "10",
@@ -192,6 +212,8 @@ export const allBonds: Bond[] = [
     faceValue: 1000,
     investedAmount: 0,
     nextCoupon: "2025-05-10",
+    issueDate: "2023-05-10",
+    status: "accepted",
   },
   {
     id: "11",
@@ -209,6 +231,8 @@ export const allBonds: Bond[] = [
     faceValue: 1000,
     investedAmount: 0,
     nextCoupon: "2025-05-30",
+    issueDate: "2024-11-30",
+    status: "accepted",
   },
 ];
 
