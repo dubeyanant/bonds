@@ -175,7 +175,7 @@ export const allBonds: Bond[] = [
     investedAmount: 0,
     nextCoupon: "2025-06-30",
     issueDate: "2023-12-31",
-    status: "accepted",
+    status: "null",
   },
   {
     id: "9",
@@ -194,7 +194,7 @@ export const allBonds: Bond[] = [
     investedAmount: 0,
     nextCoupon: "2025-02-20",
     issueDate: "2024-08-20",
-    status: "accepted",
+    status: "null",
   },
   {
     id: "10",
@@ -213,7 +213,7 @@ export const allBonds: Bond[] = [
     investedAmount: 0,
     nextCoupon: "2025-05-10",
     issueDate: "2023-05-10",
-    status: "accepted",
+    status: "null",
   },
   {
     id: "11",
@@ -232,7 +232,7 @@ export const allBonds: Bond[] = [
     investedAmount: 0,
     nextCoupon: "2025-05-30",
     issueDate: "2024-11-30",
-    status: "accepted",
+    status: "null",
   },
 ];
 

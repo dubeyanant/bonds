@@ -11,6 +11,23 @@ export function OrderBookTab({ allBonds }: OrderBookTabProps) {
 
   return (
     <div className="space-y-6">
+            {/* Accepted Orders Section */}
+            <div>
+        <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+          Accepted Orders
+        </h3>
+        <div className="space-y-4">
+          {acceptedOrders.map((bond) => (
+            <BondCard
+              key={bond.id}
+              bond={bond}
+              type="accepted"
+            />
+          ))}
+        </div>
+      </div>
+      
       {/* Executed Orders Section */}
       <div>
         <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
@@ -23,23 +40,6 @@ export function OrderBookTab({ allBonds }: OrderBookTabProps) {
               key={bond.id}
               bond={bond}
               type="executed"
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Accepted Orders Section */}
-      <div>
-        <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-          <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-          Accepted Orders
-        </h3>
-        <div className="space-y-4">
-          {acceptedOrders.map((bond) => (
-            <BondCard
-              key={bond.id}
-              bond={bond}
-              type="accepted"
             />
           ))}
         </div>

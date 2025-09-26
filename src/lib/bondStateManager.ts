@@ -154,9 +154,11 @@ export class BondStateManager {
     return { success: true, message: 'Bond sold successfully', updatedBonds: bonds };
   }
 
-  // Get bonds that are currently held (heldQuantity > 0)
+  // Get bonds that are currently held (heldQuantity > 0 and status is executed)
   static getHeldBonds(): Bond[] {
-    return this.getBondState().filter(bond => (bond.heldQuantity || 0) > 0);
+    return this.getBondState().filter(bond => 
+      (bond.heldQuantity || 0) > 0 && bond.status === 'executed'
+    );
   }
 
   // Get bonds available for purchase (maxUnitsAvailable > 0)
@@ -173,6 +175,27 @@ export class BondStateManager {
   static resetToDefault(): void {
     localStorage.removeItem(this.STORAGE_KEY);
     localStorage.removeItem(this.TRANSACTIONS_KEY);
+  }
+
+  // Update bond status
+  static updateBondStatus(bondId: string, status: 'accepted' | 'executed' | 'null'): { success: boolean; message: string } {
+    const bonds = this.getBondState();
+    const bondIndex = bonds.findIndex(b => b.id === bondId);
+    
+    if (bondIndex === -1) {
+      return { success: false, message: 'Bond not found' };
+    }
+
+    // Update the bond status
+    bonds[bondIndex] = {
+      ...bonds[bondIndex],
+      status: status
+    };
+    
+    // Save updated state
+    this.saveBondState(bonds);
+    
+    return { success: true, message: `Bond status updated to ${status}` };
   }
 
   // Calculate portfolio summary from current holdings

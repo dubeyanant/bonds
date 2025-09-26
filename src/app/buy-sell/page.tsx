@@ -100,7 +100,25 @@ function BuySellContent() {
   const handleDialogClose = () => {
     setShowSuccessDialog(false);
     setOrderDetails(null);
-    router.push('/portfolio');
+    
+    // Update bond status to "accepted" before navigating
+    if (bondData) {
+      BondStateManager.updateBondStatus(bondData.id, 'accepted');
+      // Trigger a custom event to notify other components of the state change
+      window.dispatchEvent(new CustomEvent('bondStateChanged'));
+    }
+    
+    // Navigate to portfolio page with orderbook tab active
+    router.push('/portfolio?tab=orderbook');
+    
+    // After navigating, wait 20 seconds and change status to "executed"
+    setTimeout(() => {
+      if (bondData) {
+        BondStateManager.updateBondStatus(bondData.id, 'executed');
+        // Trigger another event to update the UI
+        window.dispatchEvent(new CustomEvent('bondStateChanged'));
+      }
+    }, 20000); // 20 seconds = 20000 milliseconds
   };
   
   // Listen for bond state changes to update current bond data
