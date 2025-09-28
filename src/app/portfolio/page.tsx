@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/tabs";
 import { usePortfolioData } from "@/hooks/usePortfolioData";
 import { BondStateManager } from "@/lib/bondStateManager";
+import { Bond } from "@/lib/mockData";
 import { PortfolioHeader } from "@/components/portfolio/PortfolioHeader";
 import { PortfolioSummary } from "@/components/portfolio/PortfolioSummary";
 import { HoldingsTab } from "@/components/portfolio/HoldingsTab";
@@ -19,7 +20,7 @@ export default function PortfolioPage() {
   const { holdings, portfolioSummary } = usePortfolioData();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [allBonds, setAllBonds] = useState(BondStateManager.getBondState());
+  const [allBonds, setAllBonds] = useState<Bond[]>([]);
   
   // Get the tab from URL parameter, default to 'holdings' if not provided
   const activeTab = searchParams.get('tab') || 'holdings';
@@ -31,19 +32,34 @@ export default function PortfolioPage() {
     }
   }, [searchParams, router]);
 
-  // Handle tab changes by updating the URL
+  // Handle tab changes by updating the URL smoothly
   const handleTabChange = (value: string) => {
     router.push(`/portfolio?tab=${value}`);
   };
 
-  // Listen for bond state changes to update allBonds for OrderBook
+  // Initialize bond data and listen for changes
   useEffect(() => {
+    // Initialize allBonds data asynchronously to prevent SSR issues
+    const initializeBondData = async () => {
+      if (typeof window !== 'undefined') {
+        // Use setTimeout to make this async and non-blocking
+        await new Promise(resolve => setTimeout(resolve, 0));
+        setAllBonds(BondStateManager.getBondState());
+      }
+    };
+    
+    initializeBondData();
+
     const handleBondStateChange = () => {
-      setAllBonds(BondStateManager.getBondState());
+      if (typeof window !== 'undefined') {
+        setAllBonds(BondStateManager.getBondState());
+      }
     };
 
-    window.addEventListener('bondStateChanged', handleBondStateChange);
-    return () => window.removeEventListener('bondStateChanged', handleBondStateChange);
+    if (typeof window !== 'undefined') {
+      window.addEventListener('bondStateChanged', handleBondStateChange);
+      return () => window.removeEventListener('bondStateChanged', handleBondStateChange);
+    }
   }, []);
 
   return (

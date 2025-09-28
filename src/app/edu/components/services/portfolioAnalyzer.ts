@@ -7,8 +7,6 @@ export const analyzePortfolio = async (portfolioInputs: PortfolioInputs): Promis
   const mutualFunds = parseFloat(portfolioInputs.mutualFunds) || 0;
   const fixedDeposits = parseFloat(portfolioInputs.fixedDeposits) || 0;
   const bonds = parseFloat(portfolioInputs.bonds) || 0;
-  const otherInvestment = parseFloat(portfolioInputs.otherInvestmentAmount) || 0;
-  const totalPortfolio = stocks + mutualFunds + fixedDeposits + bonds + otherInvestment;
   
   // Convert to API format (excluding other investments for now as APIs don't support them)
   const apiPortfolio = convertToApiFormat(stocks, mutualFunds, fixedDeposits, bonds);

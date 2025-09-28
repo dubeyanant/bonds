@@ -28,24 +28,13 @@ export function BondCard({ bond, type, onAction }: BondCardProps) {
   };
 
   const getRatingBadgeStyle = (rating: string) => {
-    if (rating === 'AAA') return 'bg-green-100 text-green-800';
-    if (rating === 'AA+') return 'bg-blue-100 text-blue-800';
-    if (rating.startsWith('A')) return 'bg-yellow-100 text-yellow-800';
-    if (rating.startsWith('B')) return 'bg-orange-100 text-orange-800';
-    if (rating.startsWith('C')) return 'bg-red-100 text-red-800';
-    if (rating === 'D') return 'bg-gray-800 text-white';
-    return 'bg-gray-100 text-gray-800';
-  };
-
-  const getStatusBadge = () => {
-    switch (type) {
-      case 'executed':
-        return <Badge className="bg-green-100 text-green-800">Executed</Badge>;
-      case 'accepted':
-        return <Badge className="bg-blue-100 text-blue-800">Accepted</Badge>;
-      default:
-        return null;
-    }
+    if (rating === 'AAA') return 'bg-green-100 hover:bg-green-200 text-green-800';
+    if (rating === 'AA+') return 'bg-blue-100 hover:bg-blue-200 text-blue-800';
+    if (rating.startsWith('A')) return 'bg-yellow-100 hover:bg-yellow-200 text-yellow-800';
+    if (rating.startsWith('B')) return 'bg-orange-100 hover:bg-orange-200 text-orange-800';
+    if (rating.startsWith('C')) return 'bg-red-100 hover:bg-red-200 text-red-800';
+    if (rating === 'D') return 'bg-gray-800 hover:bg-gray-700 text-white';
+    return 'bg-gray-100 hover:bg-gray-200 text-gray-800';
   };
 
   const getIconStyle = () => {
@@ -83,7 +72,6 @@ export function BondCard({ bond, type, onAction }: BondCardProps) {
                   <Badge className={getRatingBadgeStyle(bond.rating)}>
                     {bond.rating}
                   </Badge>
-                  {getStatusBadge()}
                 </div>
               </div>
             </div>

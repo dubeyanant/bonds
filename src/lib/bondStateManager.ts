@@ -15,6 +15,13 @@ export class BondStateManager {
 
   // Get current bond state from localStorage or return default
   static getBondState(): Bond[] {
+    // Check if running in browser environment
+    if (typeof window === 'undefined') {
+      // Server-side rendering - return default state
+      const { allBonds } = require('./mockData');
+      return [...allBonds];
+    }
+
     try {
       const saved = localStorage.getItem(this.STORAGE_KEY);
       if (saved) {
@@ -23,7 +30,7 @@ export class BondStateManager {
     } catch (error) {
       console.error('Error loading bond state:', error);
     }
-    
+
     // Return default state from mockData if no saved state
     const { allBonds } = require('./mockData');
     return [...allBonds];
@@ -31,6 +38,8 @@ export class BondStateManager {
 
   // Save bond state to localStorage
   static saveBondState(bonds: Bond[]): void {
+    if (typeof window === 'undefined') return;
+
     try {
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(bonds));
     } catch (error) {
@@ -40,6 +49,8 @@ export class BondStateManager {
 
   // Get transaction history
   static getTransactionHistory(): BondTransaction[] {
+    if (typeof window === 'undefined') return [];
+
     try {
       const saved = localStorage.getItem(this.TRANSACTIONS_KEY);
       if (saved) {
@@ -56,6 +67,8 @@ export class BondStateManager {
 
   // Save transaction to history
   static saveTransaction(transaction: Omit<BondTransaction, 'id' | 'timestamp'>): void {
+    if (typeof window === 'undefined') return;
+
     try {
       const transactions = this.getTransactionHistory();
       const newTransaction: BondTransaction = {
@@ -63,7 +76,7 @@ export class BondStateManager {
         id: `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         timestamp: new Date()
       };
-      
+
       transactions.push(newTransaction);
       localStorage.setItem(this.TRANSACTIONS_KEY, JSON.stringify(transactions));
     } catch (error) {
@@ -75,13 +88,13 @@ export class BondStateManager {
   static buyBond(bondId: string, quantity: number): { success: boolean; message: string; updatedBonds?: Bond[] } {
     const bonds = this.getBondState();
     const bondIndex = bonds.findIndex(b => b.id === bondId);
-    
+
     if (bondIndex === -1) {
       return { success: false, message: 'Bond not found' };
     }
 
     const bond = bonds[bondIndex];
-    
+
     // Check if enough units are available
     if (bond.maxUnitsAvailable < quantity) {
       return { success: false, message: 'Insufficient units available' };
@@ -96,10 +109,10 @@ export class BondStateManager {
     };
 
     bonds[bondIndex] = updatedBond;
-    
+
     // Save updated state
     this.saveBondState(bonds);
-    
+
     // Save transaction
     this.saveTransaction({
       bondId,
@@ -115,13 +128,13 @@ export class BondStateManager {
   static sellBond(bondId: string, quantity: number): { success: boolean; message: string; updatedBonds?: Bond[] } {
     const bonds = this.getBondState();
     const bondIndex = bonds.findIndex(b => b.id === bondId);
-    
+
     if (bondIndex === -1) {
       return { success: false, message: 'Bond not found' };
     }
 
     const bond = bonds[bondIndex];
-    
+
     // Check if enough units are held
     if ((bond.heldQuantity || 0) < quantity) {
       return { success: false, message: 'Insufficient units held' };
@@ -129,7 +142,7 @@ export class BondStateManager {
 
     // Calculate average buy price for the units being sold
     const avgBuyPrice = bond.heldQuantity > 0 ? bond.investedAmount / bond.heldQuantity : bond.currentPrice;
-    
+
     // Update bond state
     const updatedBond = {
       ...bond,
@@ -139,10 +152,10 @@ export class BondStateManager {
     };
 
     bonds[bondIndex] = updatedBond;
-    
+
     // Save updated state
     this.saveBondState(bonds);
-    
+
     // Save transaction
     this.saveTransaction({
       bondId,
@@ -156,7 +169,7 @@ export class BondStateManager {
 
   // Get bonds that are currently held (heldQuantity > 0 and status is executed)
   static getHeldBonds(): Bond[] {
-    return this.getBondState().filter(bond => 
+    return this.getBondState().filter(bond =>
       (bond.heldQuantity || 0) > 0 && bond.status === 'executed'
     );
   }
@@ -173,6 +186,8 @@ export class BondStateManager {
 
   // Reset to default state (useful for testing)
   static resetToDefault(): void {
+    if (typeof window === 'undefined') return;
+
     localStorage.removeItem(this.STORAGE_KEY);
     localStorage.removeItem(this.TRANSACTIONS_KEY);
   }
@@ -181,7 +196,7 @@ export class BondStateManager {
   static updateBondStatus(bondId: string, status: 'accepted' | 'executed' | 'null'): { success: boolean; message: string } {
     const bonds = this.getBondState();
     const bondIndex = bonds.findIndex(b => b.id === bondId);
-    
+
     if (bondIndex === -1) {
       return { success: false, message: 'Bond not found' };
     }
@@ -191,24 +206,24 @@ export class BondStateManager {
       ...bonds[bondIndex],
       status: status
     };
-    
+
     // Save updated state
     this.saveBondState(bonds);
-    
+
     return { success: true, message: `Bond status updated to ${status}` };
   }
 
   // Calculate portfolio summary from current holdings
   static getPortfolioSummary() {
     const heldBonds = this.getHeldBonds();
-    
+
     const totalInvested = heldBonds.reduce((sum, bond) => sum + (bond.investedAmount || 0), 0);
-    const totalCurrentValue = heldBonds.reduce((sum, bond) => 
+    const totalCurrentValue = heldBonds.reduce((sum, bond) =>
       sum + ((bond.heldQuantity || 0) * bond.currentPrice), 0
     );
     const totalGain = totalCurrentValue - totalInvested;
     const gainPercentage = totalInvested > 0 ? (totalGain / totalInvested) * 100 : 0;
-    
+
     // Calculate monthly income (approximate based on coupon rates)
     const monthlyIncome = heldBonds.reduce((sum, bond) => {
       const annualCoupon = ((bond.heldQuantity || 0) * bond.faceValue * bond.couponRate) / 100;
@@ -216,7 +231,7 @@ export class BondStateManager {
     }, 0);
 
     // Calculate average yield
-    const totalFaceValue = heldBonds.reduce((sum, bond) => 
+    const totalFaceValue = heldBonds.reduce((sum, bond) =>
       sum + ((bond.heldQuantity || 0) * bond.faceValue), 0
     );
     const weightedYTM = heldBonds.reduce((sum, bond) => {

@@ -15,7 +15,12 @@ export function usePortfolioData() {
     avgYield: 0
   });
 
-  const loadBondData = () => {
+  const loadBondData = async () => {
+    // Make data loading async to prevent blocking
+    await new Promise(resolve => setTimeout(resolve, 0));
+    
+    if (typeof window === 'undefined') return;
+    
     const heldBonds = BondStateManager.getHeldBonds();
     const availableBonds = BondStateManager.getAvailableBonds();
     const summary = BondStateManager.getPortfolioSummary();
@@ -33,19 +38,20 @@ export function usePortfolioData() {
       loadBondData();
     };
 
-    window.addEventListener('storage', handleStorageChange);
-
     // Listen for custom bond state change events
     const handleBondStateChange = () => {
       loadBondData();
     };
 
-    window.addEventListener('bondStateChanged', handleBondStateChange);
+    if (typeof window !== 'undefined') {
+      window.addEventListener('storage', handleStorageChange);
+      window.addEventListener('bondStateChanged', handleBondStateChange);
 
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('bondStateChanged', handleBondStateChange);
-    };
+      return () => {
+        window.removeEventListener('storage', handleStorageChange);
+        window.removeEventListener('bondStateChanged', handleBondStateChange);
+      };
+    }
   }, []);
 
   return {

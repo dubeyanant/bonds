@@ -118,7 +118,7 @@ function BuySellContent() {
         // Trigger another event to update the UI
         window.dispatchEvent(new CustomEvent('bondStateChanged'));
       }
-    }, 20000); // 20 seconds = 20000 milliseconds
+    }, 8000);
   };
   
   // Listen for bond state changes to update current bond data

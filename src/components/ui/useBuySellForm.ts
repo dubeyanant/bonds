@@ -56,7 +56,7 @@ export const useBuySellForm = ({
 			setTimeout(() => {
 				setIsLoading(false);
 				onOrderPlaced(parseInt(units));
-			}, 2000);
+			}, 500);
 		};
 	};
 
