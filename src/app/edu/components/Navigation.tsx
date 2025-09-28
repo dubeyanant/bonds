@@ -42,7 +42,7 @@ export function Navigation({ activeView, onViewChange }: NavigationProps) {
     },
     {
       id: "suggestions",
-      label: "Suggestions",
+      label: "Recommendations",
       icon: PieChart,
       badge: "New"
     },

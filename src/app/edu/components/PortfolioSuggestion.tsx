@@ -57,7 +57,7 @@ export function PortfolioSuggestion() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="mb-2 flex items-center gap-2">
-            AI Portfolio Suggestions
+            AI Portfolio Recommendations
           </h1>
           <p className="text-gray-600">
             Get personalized bond recommendations to optimize your portfolio risk and returns
