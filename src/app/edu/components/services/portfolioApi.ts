@@ -5,8 +5,8 @@ import {
   RebalanceResponse,
 } from "../types/portfolioTypes";
 
-// Use relative URL for API calls - Next.js will proxy to the backend
-const API_BASE_URL = "/api/portfolio";
+// Direct API calls to Python server
+const API_BASE_URL = "http://127.0.0.1:8000";
 
 /**
  * Call the risk prediction API
@@ -17,7 +17,7 @@ export const predictRisk = async (
   portfolio: RiskPredictionRequest
 ): Promise<RiskPredictionResponse> => {
   try {
-    console.log("🔍 [Risk Prediction API] Request:", {
+    console.log("🔍 [Risk Prediction API] Direct request to Python server:", {
       url: `${API_BASE_URL}/predict_risk`,
       method: "POST",
       payload: portfolio
@@ -55,7 +55,7 @@ export const rebalancePortfolio = async (
   portfolio: RebalanceRequest
 ): Promise<RebalanceResponse> => {
   try {
-    console.log("⚖️ [Portfolio Rebalance API] Request:", {
+    console.log("⚖️ [Portfolio Rebalance API] Direct request to Python server:", {
       url: `${API_BASE_URL}/rebalance`,
       method: "POST",
       payload: portfolio
