@@ -15,8 +15,6 @@ export interface BondSuggestion {
   currentYield: number;
   currentPrice: number;
   maturityDate: string;
-  suggestedAmount: number;
-  units: number;
   riskContribution: number;
   reason: string;
 }

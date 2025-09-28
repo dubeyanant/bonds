@@ -2,6 +2,82 @@ import { PortfolioInputs, AnalysisResult, BondSuggestion } from "../types/portfo
 import { getOtherInvestmentRiskFactor } from "../utils/portfolioUtils";
 import { predictRisk, rebalancePortfolio, convertToApiFormat } from "./portfolioApi";
 
+// Shared bond suggestions generator
+const generateBondSuggestions = (suggestedBondAllocation: number): BondSuggestion[] => {
+  const allBondSuggestions: BondSuggestion[] = [
+    {
+      id: "1",
+      name: "10 Year Government Security",
+      issuer: "Government of India",
+      rating: "AAA",
+      currentYield: 7.24,
+      currentPrice: 1020,
+      maturityDate: "2034-01-15",
+      riskContribution: 0.5,
+      reason: "Sovereign guarantee provides stability and reduces overall portfolio risk"
+    },
+    {
+      id: "2", 
+      name: "HDFC Bank Bond Series XV",
+      issuer: "HDFC Bank",
+      rating: "AAA",
+      currentYield: 8.45,
+      currentPrice: 985,
+      maturityDate: "2029-03-20",
+      riskContribution: 0.8,
+      reason: "High-quality corporate bond offering better yields while maintaining low risk"
+    },
+    {
+      id: "3",
+      name: "NABARD Rural Infrastructure Bond",
+      issuer: "NABARD",
+      rating: "AAA",
+      currentYield: 7.65,
+      currentPrice: 1015,
+      maturityDate: "2031-04-30",
+      riskContribution: 0.6,
+      reason: "Infrastructure bonds with tax benefits and strong credit profile"
+    },
+    {
+      id: "4",
+      name: "ICICI Bank Perpetual Bonds",
+      issuer: "ICICI Bank",
+      rating: "AA+",
+      currentYield: 8.75,
+      currentPrice: 945,
+      maturityDate: "2032-06-15",
+      riskContribution: 0.9,
+      reason: "Higher yield from reputable private bank with strong fundamentals"
+    },
+    {
+      id: "5",
+      name: "REC Limited Green Bonds",
+      issuer: "REC Limited",
+      rating: "AAA",
+      currentYield: 7.85,
+      currentPrice: 1005,
+      maturityDate: "2030-09-12",
+      riskContribution: 0.7,
+      reason: "ESG-focused green bonds supporting renewable energy projects"
+    },
+    {
+      id: "6",
+      name: "Power Finance Corporation Bonds",
+      issuer: "PFC Limited",
+      rating: "AA+",
+      currentYield: 8.35,
+      currentPrice: 975,
+      maturityDate: "2028-12-08",
+      riskContribution: 0.85,
+      reason: "PSU bonds with attractive yields backed by government support"
+    }
+  ];
+
+  // Randomly select 3 bonds from the 6 available options
+  const shuffledBonds = [...allBondSuggestions].sort(() => Math.random() - 0.5);
+  return shuffledBonds.slice(0, 3);
+};
+
 export const analyzePortfolio = async (portfolioInputs: PortfolioInputs): Promise<AnalysisResult> => {
   const stocks = parseFloat(portfolioInputs.stocks) || 0;
   const mutualFunds = parseFloat(portfolioInputs.mutualFunds) || 0;
@@ -35,47 +111,8 @@ export const analyzePortfolio = async (portfolioInputs: PortfolioInputs): Promis
     // Calculate suggested bond allocation from the rebalance API
     const suggestedBondAllocation = rebalanceResult.suggested.bonds - bonds;
     
-    const mockSuggestions: BondSuggestion[] = [
-      {
-        id: "1",
-        name: "10 Year Government Security",
-        issuer: "Government of India",
-        rating: "AAA",
-        currentYield: 7.24,
-        currentPrice: 1020,
-        maturityDate: "2034-01-15",
-        suggestedAmount: suggestedBondAllocation * 0.4,
-        units: Math.floor((suggestedBondAllocation * 0.4) / 1020),
-        riskContribution: 0.5,
-        reason: "Sovereign guarantee provides stability and reduces overall portfolio risk"
-      },
-      {
-        id: "2", 
-        name: "HDFC Bank Bond Series XV",
-        issuer: "HDFC Bank",
-        rating: "AAA",
-        currentYield: 8.45,
-        currentPrice: 985,
-        maturityDate: "2029-03-20",
-        suggestedAmount: suggestedBondAllocation * 0.35,
-        units: Math.floor((suggestedBondAllocation * 0.35) / 985),
-        riskContribution: 0.8,
-        reason: "High-quality corporate bond offering better yields while maintaining low risk"
-      },
-      {
-        id: "3",
-        name: "NABARD Rural Infrastructure Bond",
-        issuer: "NABARD",
-        rating: "AAA",
-        currentYield: 7.65,
-        currentPrice: 1015,
-        maturityDate: "2031-04-30",
-        suggestedAmount: suggestedBondAllocation * 0.25,
-        units: Math.floor((suggestedBondAllocation * 0.25) / 1015),
-        riskContribution: 0.6,
-        reason: "Infrastructure bonds with tax benefits and strong credit profile"
-      }
-    ];
+    // Generate bond suggestions using the shared function
+    const bondSuggestions = generateBondSuggestions(suggestedBondAllocation);
 
     const result: AnalysisResult = {
       currentRiskRating: Math.round(currentRiskRating * 10) / 10,
@@ -103,7 +140,7 @@ export const analyzePortfolio = async (portfolioInputs: PortfolioInputs): Promis
           change: rebalanceResult.suggested.bonds - bonds
         }
       },
-      suggestions: mockSuggestions,
+      suggestions: bondSuggestions,
       riskReduction: currentRiskRating - improvedRiskRating,
       expectedReturns: 7.8 // Expected blended return
     };
@@ -149,90 +186,8 @@ const analyzePortfolioFallback = async (portfolioInputs: PortfolioInputs): Promi
   // Bond allocation equals exactly what we remove from other assets
   const suggestedBondAllocation = stockReduction + mfReduction;
   
-  const allBondSuggestions: BondSuggestion[] = [
-    {
-      id: "1",
-      name: "10 Year Government Security",
-      issuer: "Government of India",
-      rating: "AAA",
-      currentYield: 7.24,
-      currentPrice: 1020,
-      maturityDate: "2034-01-15",
-      suggestedAmount: 25 * 1020,
-      units: 25,
-      riskContribution: 0.5,
-      reason: "Sovereign guarantee provides stability and reduces overall portfolio risk"
-    },
-    {
-      id: "2", 
-      name: "HDFC Bank Bond Series XV",
-      issuer: "HDFC Bank",
-      rating: "AAA",
-      currentYield: 8.45,
-      currentPrice: 985,
-      maturityDate: "2029-03-20",
-      suggestedAmount: 30 * 985,
-      units: 30,
-      riskContribution: 0.8,
-      reason: "High-quality corporate bond offering better yields while maintaining low risk"
-    },
-    {
-      id: "3",
-      name: "NABARD Rural Infrastructure Bond",
-      issuer: "NABARD",
-      rating: "AAA",
-      currentYield: 7.65,
-      currentPrice: 1015,
-      maturityDate: "2031-04-30",
-      suggestedAmount: 20 * 1015,
-      units: 20,
-      riskContribution: 0.6,
-      reason: "Infrastructure bonds with tax benefits and strong credit profile"
-    },
-    {
-      id: "4",
-      name: "ICICI Bank Perpetual Bonds",
-      issuer: "ICICI Bank",
-      rating: "AA+",
-      currentYield: 8.75,
-      currentPrice: 945,
-      maturityDate: "2032-06-15",
-      suggestedAmount: 35 * 945,
-      units: 35,
-      riskContribution: 0.9,
-      reason: "Higher yield from reputable private bank with strong fundamentals"
-    },
-    {
-      id: "5",
-      name: "REC Limited Green Bonds",
-      issuer: "REC Limited",
-      rating: "AAA",
-      currentYield: 7.85,
-      currentPrice: 1005,
-      maturityDate: "2030-09-12",
-      suggestedAmount: 28 * 1005,
-      units: 28,
-      riskContribution: 0.7,
-      reason: "ESG-focused green bonds supporting renewable energy projects"
-    },
-    {
-      id: "6",
-      name: "Power Finance Corporation Bonds",
-      issuer: "PFC Limited",
-      rating: "AA+",
-      currentYield: 8.35,
-      currentPrice: 975,
-      maturityDate: "2028-12-08",
-      suggestedAmount: 40 * 975,
-      units: 40,
-      riskContribution: 0.85,
-      reason: "PSU bonds with attractive yields backed by government support"
-    }
-  ];
-
-  // Randomly select 3 bonds from the 6 available options
-  const shuffledBonds = [...allBondSuggestions].sort(() => Math.random() - 0.5);
-  const mockSuggestions = shuffledBonds.slice(0, 3);
+  // Generate bond suggestions using the shared function
+  const bondSuggestions = generateBondSuggestions(suggestedBondAllocation);
   
   // Calculate improved risk rating with better credit risk reduction
   const newStockWeight = (stocks - stockReduction) / totalPortfolio;
@@ -273,7 +228,7 @@ const analyzePortfolioFallback = async (portfolioInputs: PortfolioInputs): Promi
         change: suggestedBondAllocation
       }
     },
-    suggestions: mockSuggestions,
+    suggestions: bondSuggestions,
     riskReduction: currentRiskRating - improvedRiskRating,
     expectedReturns: 7.8
   };
