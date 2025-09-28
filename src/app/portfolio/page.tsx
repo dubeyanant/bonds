@@ -1,7 +1,7 @@
 "use client"
 
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import {
   Tabs,
   TabsContent,
@@ -16,7 +16,7 @@ import { PortfolioSummary } from "@/components/portfolio/PortfolioSummary";
 import { HoldingsTab } from "@/components/portfolio/HoldingsTab";
 import { OrderBookTab } from "@/components/portfolio/OrderBookTab";
 
-export default function PortfolioPage() {
+function PortfolioPageContent() {
   const { holdings, portfolioSummary } = usePortfolioData();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -25,7 +25,7 @@ export default function PortfolioPage() {
   // Get the tab from URL parameter, default to 'holdings' if not provided
   const activeTab = searchParams.get('tab') || 'holdings';
 
-  // Redirect to holdings tab if no tab parameter is present
+  // Redirect to holding tab if no tab parameter is present
   useEffect(() => {
     if (!searchParams.get('tab')) {
       router.replace('/portfolio?tab=holdings');
@@ -85,5 +85,13 @@ export default function PortfolioPage() {
         </Tabs>
       </div>
     </div>
+  );
+}
+
+export default function PortfolioPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>}>
+      <PortfolioPageContent />
+    </Suspense>
   );
 }
