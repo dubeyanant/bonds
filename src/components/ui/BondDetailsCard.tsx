@@ -53,7 +53,7 @@ export function BondDetailsCard({
 						<div>
 							<Label className="text-sm text-gray-600">
 								{transactionType === "buy"
-									? "Current Price"
+									? "Current Unit Price"
 									: "Avg Buy Price"}
 							</Label>
 							<p className="font-medium">

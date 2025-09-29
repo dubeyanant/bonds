@@ -16,13 +16,13 @@ export function PortfolioHeader() {
               className="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 transition-colors"
               onClick={() => router.push('/explore-bonds')}
             >
-              Explore Bonds
+              Search Bonds
             </button>
             <div className="flex items-center gap-2">
               <div className="bg-gray-100 p-2 rounded-full">
                 <User className="h-5 w-5 text-gray-600" />
               </div>
-              <span className="text-sm font-medium text-gray-700">Anant Dubey</span>
+              <span className="text-sm font-medium text-gray-700">Shubham Auti</span>
             </div>
           </div>
         </div>

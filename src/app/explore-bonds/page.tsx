@@ -82,7 +82,7 @@ export default function ExploreBondsPage() {
               <div className="bg-gray-100 p-2 rounded-full">
                 <User className="h-5 w-5 text-gray-600" />
               </div>
-              <span className="text-sm font-medium text-gray-700">Anant Dubey</span>
+              <span className="text-sm font-medium text-gray-700">Shubham Auti</span>
             </div>
           </div>
         </div>

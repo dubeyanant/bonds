@@ -157,6 +157,23 @@ export function EducationalHub() {
 
   const getModuleState = (moduleId: string, defaultProgress: number, defaultCompleted: boolean) => {
     const saved = moduleProgress[moduleId];
+    
+    // Special handling for module "1" to start at lesson 4 (only on client side)
+    if (moduleId === "1" && typeof window !== 'undefined') {
+      // Set localStorage to start at lesson 4 (index 3)
+      const savedState = localStorage.getItem('bondLearningFlow_module1');
+      if (!savedState) {
+        const initialState = {
+          currentIndex: 3, // Start at lesson 4 (0-indexed)
+          completed: [1, 2, 3], // Mark first 3 lessons as completed
+          answers: {},
+          lastUpdated: new Date().toISOString()
+        };
+        localStorage.setItem('bondLearningFlow_module1', JSON.stringify(initialState));
+        console.log('🎯 Set module 1 to start at lesson 4');
+      }
+    }
+    
     return {
       progress: saved?.progress ?? defaultProgress,
       isCompleted: saved?.isCompleted ?? defaultCompleted
@@ -177,7 +194,7 @@ export function EducationalHub() {
       description: "Learn the fundamentals of bond investing, what bonds are, and how they work",
       duration: "45 min",
       difficulty: "Beginner",
-      ...getModuleState("1", 0, false),
+      ...getModuleState("1", 80, false),
       isLocked: false,
       topics: ["Bond Basics", "Types of Bonds", "Bond vs Stocks"],
       type: "interactive"

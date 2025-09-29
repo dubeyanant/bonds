@@ -118,7 +118,7 @@ function BuySellContent() {
         // Trigger another event to update the UI
         window.dispatchEvent(new CustomEvent('bondStateChanged'));
       }
-    }, 8000);
+    }, 10000);
   };
   
   // Listen for bond state changes to update current bond data
